@@ -1,0 +1,11 @@
+<div class="meta">
+
+    {% for draft in drafts %}
+        <a class="btn submit" href="{{ draft.cpEditUrl }}&draftId={{ draft.draftId }}">{{ draft.draftName }}</a>
+    {% endfor %}
+
+    {% if entry.id and not entry.isUnsavedDraft %}
+        <a class="btn" href="{{ cpUrl('versions/versions',{id:entry.sourceId, site:entry.site.handle}) }}">Drafts and Revisions</a>
+    {% endif %}
+</div>
+

@@ -1,0 +1,98 @@
+{% extends "_layouts/cp" %}
+{% set title = 'Drafts (provisional)' %}
+
+{% set status = craft.app.request.param('status') ?: 'all' %}
+
+{% block sidebar %}
+    <nav>
+        <ul>
+            <li>
+                <a class="{{ status == 'all' ?'sel' }}" href="{{ cpUrl('versions/drafts',{status:'all'}) }}">
+                    <span class="label">All</span></a>
+            </li>
+            <li class="heading"><span>Nach Status</span></li>
+            <li>
+                <a class="{{ status == 'unsaved' ?'sel' }}" href="{{ cpUrl('versions/drafts',{status:'unsaved'}) }}">
+                    <span class="label">Unsaved</span></a>
+            </li>
+            <li>
+                <a class="{{ status == 'saved' ?'sel' }}" href="{{ cpUrl('versions/drafts',{status:'saved'}) }}">
+                    <span class="label">Saved</span></a>
+            </li>
+        </ul>
+    </nav>
+{% endblock %}
+
+
+{% block content %}
+
+    {% set entries = craft.entries.site('*').anyStatus.drafts(true).orderBy('dateCreated desc').all %}
+
+    {% if entries %}
+        <table id="entries" class="data fullwidth collapsible">
+            <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Section</th>
+                <th scope="col">Id</th>
+                <th scope="col">Draft Id</th>
+                <th scope="col">Source Id</th>
+                <th scope="col">Saved?</th>
+                <th scope="col">Date Created</th>
+                <th scope="col">Date Updated</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            {% for entry in entries
+                if status == 'all'
+                or (status == 'unsaved' and entry.isUnsavedDraft == true)
+                or (status == 'saved' and entry.isUnsavedDraft == false) %}
+
+                {% set section = entry.section.handle %}
+                {% set site = entry.site.handle %}
+
+                <tr data-id="{{ entry.id }}" data-name="{{ entry.title }}">
+
+                    <th data-title="Title">
+                        <a class="go"
+                           href="{{ cpUrl("entries/#{section}/#{entry.sourceId}", {site:site,draftId:entry.draftId,fresh:entry.isUnsavedDraft}) }}">{{ entry.title }}</a>
+                    </th>
+
+                    <td data-title="section">
+                        {{ entry.section.name }}
+                    </td>
+
+                    <td data-title="Id">
+                        {{ entry.id }}
+                    </td>
+
+                    <td data-title="draftId">
+                        {{ entry.draftId }}
+                    </td>
+
+                    <td data-title="Source Id">
+                        {{ entry.sourceId }}
+                    </td>
+
+                    <td data-title="Saved">
+                        {{ entry.isUnsavedDraft ? 'Unsaved' : 'Saved' }}
+                    </td>
+
+                    <td data-title="dateCreated">
+                        {{ entry.dateCreated|datetime('Y-m-d G:i') }}
+                    </td>
+                    <td data-title="dateUpdated">
+                        {{ entry.dateUpdated|datetime('Y-m-d G:i') }}
+                    </td>
+
+
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    {% endif %}
+
+{% endblock %}

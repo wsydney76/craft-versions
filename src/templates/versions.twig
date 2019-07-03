@@ -1,0 +1,25 @@
+{# @var version \craft\elements\Entry #}
+
+
+{% extends "_layouts/cp" %}
+
+{% set id = craft.app.request.param('id') %}
+{% set site = craft.app.request.param('site') %}
+{% if not id or not site %}
+    {% exit 403 %}
+{% endif %}
+
+{% set entry = craft.entries.site(site).anyStatus.id(id).one %}
+{% if not entry %}
+    {% exit 404 %}
+{% endif %}
+
+{% set title = "#{entry.section.name} #{entry.title}: Drafts and Revisions" %}
+
+{% block content %}
+
+   {% include 'versions/versions_content.twig' with {entry:entry, id:id, site:site} only %}
+
+{% endblock %}
+
+

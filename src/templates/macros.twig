@@ -1,0 +1,60 @@
+{% macro versionsTable(heading, versions, baseUrl) %}
+
+    <h2>{{ heading }}</h2>
+
+    {% set count = versions|length %}
+    <table class="data  collapsible">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Version Label</th>
+            <th>Entry ID</th>
+            <th>Version ID</th>
+            <th>Title</th>
+            <th>Slug</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Creator</th>
+            <th>Notes</th>
+
+        </tr>
+        </thead>
+        {% for version in versions %}
+            <tr>
+                <td>
+                    {% set url = baseUrl ~ (version.isRevision ? '&revisionId=' ~ version.revisionId : '&draftId=' ~ version.draftId) %}
+                    <a class="go" href="{{ url }}">{{ version.isRevision ? 'View' : 'Edit' }}</a>
+                </td>
+
+                <td>
+                    {{ version.isRevision ? version.revisionLabel : version.draftName }}
+                </td>
+                <td>
+                    {{ version.id }}
+                </td>
+                <td>
+                    {{ version.isRevision ? version.revisionId : version.draftId }}
+                </td>
+                <td>
+                    {{ version.title }}
+                </td>
+                <td>
+                    {{ version.slug }}
+                </td>
+                <td>
+                    <span class="status {{ version.enabled?'live' }}"></span>
+                    <span class="status {{ version.enabledForSite?'live' }}"></span>
+                </td>
+                <td>
+                    {{ version.dateUpdated|datetime }}
+                </td>
+                <td>
+                    {{ version.creatorId ? craft.users.id(version.creatorId).one.name }}
+                </td>
+                <td>
+                    {{ version.isRevision ? version.revisionNotes : version.draftNotes }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endmacro %}
