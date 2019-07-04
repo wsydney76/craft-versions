@@ -4,6 +4,10 @@
 
 ### Added
 * An icon. <strike>Stolen from</strike> Inspired by a Craft CMS icon.
+* Show maximal number of stored revisions
+
+### Changed
+* Also show the current revision.
 
 ### Fixed
 
