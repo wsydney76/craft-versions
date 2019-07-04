@@ -1,5 +1,5 @@
 {% extends "_layouts/cp" %}
-{% set title = 'Drafts (provisional)' %}
+{% set title = 'Drafts'|t('versions') %}
 
 {% set status = craft.app.request.param('status') ?: 'all' %}
 
@@ -8,16 +8,16 @@
         <ul>
             <li>
                 <a class="{{ status == 'all' ?'sel' }}" href="{{ cpUrl('versions/drafts',{status:'all'}) }}">
-                    <span class="label">All</span></a>
+                    <span class="label">{{ "All"|t('versions') }}</span></a>
             </li>
-            <li class="heading"><span>Nach Status</span></li>
+            <li class="heading"><span>{{ "By status"|t('versions') }}</span></li>
             <li>
                 <a class="{{ status == 'unsaved' ?'sel' }}" href="{{ cpUrl('versions/drafts',{status:'unsaved'}) }}">
-                    <span class="label">Unsaved</span></a>
+                    <span class="label">{{ "Unsaved"|t('versions') }}</span></a>
             </li>
             <li>
                 <a class="{{ status == 'saved' ?'sel' }}" href="{{ cpUrl('versions/drafts',{status:'saved'}) }}">
-                    <span class="label">Saved</span></a>
+                    <span class="label">{{ "Saved"|t('versions') }}</span></a>
             </li>
         </ul>
     </nav>
@@ -32,14 +32,14 @@
         <table id="entries" class="data fullwidth collapsible">
             <thead>
             <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Section</th>
-                <th scope="col">Id</th>
-                <th scope="col">Draft Id</th>
-                <th scope="col">Source Id</th>
-                <th scope="col">Saved?</th>
-                <th scope="col">Date Created</th>
-                <th scope="col">Date Updated</th>
+                <th scope="col">{{ "Title"|t('versions') }}</th>
+                <th scope="col">{{ "Section"|t('versions') }}</th>
+                <th scope="col">{{ "ID"|t('versions') }}</th>
+                <th scope="col">{{ "Draft ID"|t('versions') }}</th>
+                <th scope="col">{{ "Source ID"|t('versions') }}</th>
+                <th scope="col">{{ "Saved"|t('versions') }}?</th>
+                <th scope="col">{{ "Date created"|t('versions') }}</th>
+                <th scope="col">{{ "Date updated"|t('versions') }}</th>
             </tr>
             </thead>
 
@@ -77,7 +77,7 @@
                     </td>
 
                     <td data-title="Saved">
-                        {{ entry.isUnsavedDraft ? 'Unsaved' : 'Saved' }}
+                        {{ entry.isUnsavedDraft ? 'Unsaved'|t('versions') : 'Saved'|t('versions') }}
                     </td>
 
                     <td data-title="dateCreated">

@@ -2,9 +2,9 @@
 
 {% set drafts = craft.entries.site(site).anyStatus.draftOf(id).orderBy('id desc').all %}
 {% if drafts %}
-    {{ versionsTable('Drafts', drafts, entry.cpEditUrl) }}
+    {{ versionsTable('Drafts'|t('versions'), drafts, entry.cpEditUrl) }}
 {% endif %}
 
 {% set revisions = craft.entries.site(site).anyStatus.revisionOf(id).offset(1).orderBy('num desc').all %}
 
-{{ versionsTable('Revisions', revisions, entry.cpEditUrl) }}
+{{ versionsTable('Revisions'|t('versions'), revisions, entry.cpEditUrl) }}
