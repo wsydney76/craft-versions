@@ -38,7 +38,7 @@ class Versions extends \craft\base\Plugin
         Event::on(
             Cp::class,
             Cp::EVENT_REGISTER_CP_NAV_ITEMS, function(RegisterCpNavItemsEvent $event) {
-            $count = Entry::find()->site('*')->anyStatus()->drafts(true)->count();
+            $count = Entry::find()->site('*')->unique()->anyStatus()->drafts(true)->count();
             $nav = [
                 'url' => 'versions/drafts',
                 'label' => Craft::t('versions', 'Drafts'),

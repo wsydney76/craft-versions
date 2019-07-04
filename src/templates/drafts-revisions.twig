@@ -16,9 +16,24 @@
 
 {% set title = "#{entry.section.name} #{entry.title}: #{'Drafts and Revisions'|t('versions')}" %}
 
+{% block sidebar %}
+    <nav>
+        <ul>
+            <li class="heading"><span>{{ "By sites"|t('versions') }}</span></li>
+            {% for curSite in craft.app.sites.allSites %}
+                <li>
+                    <a class="{{ site == curSite.handle ?'sel' }}"
+                       href="{{ cpUrl('versions/drafts-revisions',{id:id, site:curSite.handle}) }}">
+                        <span class="label">{{ curSite.name }}</span></a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}
+
 {% block content %}
 
-   {% include 'versions/versions_content.twig' with {entry:entry, id:id, site:site} only %}
+    {% include 'versions/versions_content.twig' with {entry:entry, id:id, site:site} only %}
 
 {% endblock %}
 

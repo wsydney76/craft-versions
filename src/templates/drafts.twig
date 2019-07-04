@@ -2,15 +2,17 @@
 {% set title = 'Drafts'|t('versions') %}
 
 {% set status = craft.app.request.param('status') ?: 'all' %}
+{% set site = craft.app.request.param('site') ?: '*' %}
+{% set preferSite = craft.app.request.param('site') ?: craft.app.sites.primarySite.handle %}
 
 {% block sidebar %}
     <nav>
         <ul>
+            <li class="heading"><span>{{ "By status"|t('versions') }}</span></li>
             <li>
                 <a class="{{ status == 'all' ?'sel' }}" href="{{ cpUrl('versions/drafts',{status:'all'}) }}">
                     <span class="label">{{ "All"|t('versions') }}</span></a>
             </li>
-            <li class="heading"><span>{{ "By status"|t('versions') }}</span></li>
             <li>
                 <a class="{{ status == 'unsaved' ?'sel' }}" href="{{ cpUrl('versions/drafts',{status:'unsaved'}) }}">
                     <span class="label">{{ "Unsaved"|t('versions') }}</span></a>
@@ -19,6 +21,14 @@
                 <a class="{{ status == 'saved' ?'sel' }}" href="{{ cpUrl('versions/drafts',{status:'saved'}) }}">
                     <span class="label">{{ "Saved"|t('versions') }}</span></a>
             </li>
+
+            <li class="heading"><span>{{ "By sites"|t('versions') }}</span></li>
+            {% for curSite in craft.app.sites.allSites %}
+                <li>
+                    <a class="{{ site == curSite.handle ?'sel' }}" href="{{ cpUrl('versions/drafts',{site:curSite.handle}) }}">
+                        <span class="label">{{ curSite.name }}</span></a>
+                </li>
+            {% endfor %}
         </ul>
     </nav>
 {% endblock %}
@@ -26,7 +36,7 @@
 
 {% block content %}
 
-    {% set entries = craft.entries.site('*').anyStatus.drafts(true).orderBy('dateCreated desc').all %}
+    {% set entries = craft.entries.site(site).unique().preferSites([preferSite]).anyStatus().drafts(true).orderBy('dateCreated desc').all() %}
 
     {% if entries %}
         <table id="entries" class="data fullwidth collapsible">
@@ -35,11 +45,10 @@
                 <th scope="col">{{ "Title"|t('versions') }}</th>
                 <th scope="col">{{ "Section"|t('versions') }}</th>
                 <th scope="col">{{ "ID"|t('versions') }}</th>
-                <th scope="col">{{ "Draft ID"|t('versions') }}</th>
-                <th scope="col">{{ "Source ID"|t('versions') }}</th>
-                <th scope="col">{{ "Saved"|t('versions') }}?</th>
                 <th scope="col">{{ "Date created"|t('versions') }}</th>
                 <th scope="col">{{ "Date updated"|t('versions') }}</th>
+                <th scope="col">{{ "Internal"|t('versions') }}</th>
+
             </tr>
             </thead>
 
@@ -64,18 +73,6 @@
                         {{ entry.section.name }}
                     </td>
 
-                    <td data-title="Id">
-                        {{ entry.id }}
-                    </td>
-
-                    <td data-title="draftId">
-                        {{ entry.draftId }}
-                    </td>
-
-                    <td data-title="Source Id">
-                        {{ entry.sourceId }}
-                    </td>
-
                     <td data-title="Saved">
                         {{ entry.isUnsavedDraft ? 'Unsaved'|t('versions') : 'Saved'|t('versions') }}
                     </td>
@@ -85,6 +82,11 @@
                     </td>
                     <td data-title="dateUpdated">
                         {{ entry.dateUpdated|datetime('Y-m-d G:i') }}
+                    </td>
+                    <td data-title="internal">
+                        ID: {{ entry.id }}
+                        Draft ID: {{ entry.draftId }}
+                        Source ID: {{ entry.sourceId }}
                     </td>
 
 
