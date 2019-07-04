@@ -39,7 +39,12 @@ class Versions extends \craft\base\Plugin
             Cp::class,
             Cp::EVENT_REGISTER_CP_NAV_ITEMS, function(RegisterCpNavItemsEvent $event) {
             $count = Entry::find()->site('*')->anyStatus()->drafts(true)->count();
-            $nav = ['url' => 'versions/drafts', 'label' => 'Drafts', 'icon' => '@app/icons/field.svg', 'badgeCount' => $count];
+            $nav = [
+                'url' => 'versions/drafts',
+                'label' => Craft::t('versions', 'Drafts'),
+                'icon' => '@app/icons/field.svg',
+                'badgeCount' => $count
+            ];
             foreach ($event->navItems as $i => $navItem) {
                 if ($navItem['url'] == 'entries') {
                     break;

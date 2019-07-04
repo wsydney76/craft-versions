@@ -6,7 +6,7 @@
 {% set id = craft.app.request.param('id') %}
 {% set site = craft.app.request.param('site') %}
 {% if not id or not site %}
-    {% exit 403 %}
+    {% exit 400 %}
 {% endif %}
 
 {% set entry = craft.entries.site(site).anyStatus.id(id).one %}
@@ -14,7 +14,7 @@
     {% exit 404 %}
 {% endif %}
 
-{% set title = "#{entry.section.name} #{entry.title}: Drafts and Revisions" %}
+{% set title = "#{entry.section.name} #{entry.title}: #{'Drafts and Revisions'|t('versions')}" %}
 
 {% block content %}
 
