@@ -1,5 +1,12 @@
 # Release Notes for Versions
 
+## 1.0.3
+
+### Changed
+
+* Improve multi-site behavior 
+* improve content table layout 
+
 ## 1.0.2
 
 ### Added
