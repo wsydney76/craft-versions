@@ -14,22 +14,27 @@
     {% exit 404 %}
 {% endif %}
 
+{% set entries = craft.entries.site('*').anyStatus.id(entry.id).all %}
+
 {% set title = "#{entry.section.name} #{entry.title}: #{'Drafts and Revisions'|t('versions')}" %}
 
 {% block sidebar %}
+    {% if entries|length > 1 %}
     <nav>
         <ul>
             <li class="heading"><span>{{ "By sites"|t('versions') }}</span></li>
-            {% for curSite in craft.app.sites.allSites %}
+            {% for curEntry in entries %}
                 <li>
-                    <a class="{{ site == curSite.handle ?'sel' }}"
-                       href="{{ cpUrl('versions/drafts-revisions',{id:id, site:curSite.handle}) }}">
-                        <span class="label">{{ curSite.name }}</span></a>
+                    <a class="{{ site == curEntry.site.handle ?'sel' }}"
+                       href="{{ cpUrl('versions/drafts-revisions',{id:id, site:curEntry.site.handle}) }}">
+                        <span class="label">{{ curEntry.site.name }}</span></a>
                 </li>
             {% endfor %}
         </ul>
     </nav>
+    {% endif %}
 {% endblock %}
+
 
 {% block content %}
 

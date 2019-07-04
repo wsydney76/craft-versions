@@ -7,7 +7,7 @@
         <th>{{ "Name"|t('versions') }}</th>
         <th>{{ "Slug"|t('versions') }}</th>
         <th>{{ "Status"|t('versions') }}</th>
-        <th>{{ "Date created"|t('versions') }}</th>
+        <th>{{ "Date updated"|t('versions') }}</th>
         <th>{{ "Creator"|t('versions') }}</th>
         <th>{{ "Notes"|t('versions') }}</th>
         <th>{{ "Internal"|t('versions') }}</th>
@@ -18,10 +18,14 @@
     {% set drafts = craft.entries.site(site).anyStatus.draftOf(id).orderBy('id desc').all %}
     {{ versionsTable('Drafts'|t('versions'), drafts, entry.cpEditUrl) }}
 
-    {% set revisions = craft.entries.site(site).anyStatus.revisionOf(id).offset(1).orderBy('num desc').all %}
+    {% set revisions = craft.entries.site(site).anyStatus.revisionOf(id).orderBy('num desc').all %}
     {{ versionsTable('Revisions'|t('versions'), revisions, entry.cpEditUrl) }}
 
 </table>
+
+<p>
+{{ "Maximal number of saved revisions"|t('versions') }}: {{ craft.app.config.general.maxRevisions }}
+</p>
 
 {% css %}
     .versions-heading {

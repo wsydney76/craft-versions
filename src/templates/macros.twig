@@ -18,6 +18,9 @@
                 </td>
                 <td>
                     {{ version.isRevision ? version.revisionLabel : version.draftName }}
+                    {% if version.isRevision and loop.index == 1 %}
+                        ({{ "Current"|t('versions') }})
+                    {% endif %}
                 </td>
                 <td>
                     {{ version.slug }}
