@@ -7,3 +7,8 @@ Improves visibility of drafts and revisions
     * Link to pending drafts, if opening the 'main' version
     * Link to version overview page, listing all drafts and revisions for the current entry.
 
+## Disclaimer
+This is not an 'official plugin', see it a some kind
+of 'proof of concept'.
+
+Only intended for private use. No support.

@@ -1,7 +1,7 @@
 {
   "name": "wsydney76/versions",
   "description": "Improves visibility of drafts and revisions",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "craft-plugin",
   "keywords": ["craftcms", "drafts", "revisions"],
   "license": "MIT",
@@ -12,8 +12,8 @@
     }
   ],
   "support": {
-    "email": "email@developer-website.tld",
-    "issues": "https://github.com/github.com/wsydney76/versions/issues?state=open",
+    "email": "wsydney76@googlemail.com",
+    "issues": "https://github.com/wsydney76/versions/issues",
     "source": "https://github.com/wsydney76/versions",
     "docs": "https://github.com/wsydney76/versions/blob/master/README.md"
   },

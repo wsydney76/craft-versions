@@ -22,13 +22,17 @@
                     <span class="label">{{ "Saved"|t('versions') }}</span></a>
             </li>
 
-            <li class="heading"><span>{{ "By sites"|t('versions') }}</span></li>
-            {% for curSite in craft.app.sites.allSites %}
-                <li>
-                    <a class="{{ site == curSite.handle ?'sel' }}" href="{{ cpUrl('versions/drafts',{site:curSite.handle}) }}">
-                        <span class="label">{{ curSite.name }}</span></a>
-                </li>
-            {% endfor %}
+            {% set allSites = craft.app.sites.allSites %}
+            {% if allSites|length > 1 %}
+                <li class="heading"><span>{{ "By sites"|t('versions') }}</span></li>
+                {% for curSite in allSites %}
+                    <li>
+                        <a class="{{ site == curSite.handle ?'sel' }}"
+                           href="{{ cpUrl('versions/drafts',{site:curSite.handle}) }}">
+                            <span class="label">{{ curSite.name }}</span></a>
+                    </li>
+                {% endfor %}
+            {% endif %}
         </ul>
     </nav>
 {% endblock %}
