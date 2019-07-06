@@ -1,5 +1,17 @@
 # Release Notes for Versions
 
+## 1.1.0 2018-07-06
+
+### Added
+ 
+* Settings page, select to show when internal stuff is displayed.
+* A real 'version created' timestamp, respecting the time
+when a draft was really created.
+
+### Changed
+
+* Some internal rework for better maintainability.
+
 ## 1.0.4 - 2019-07-04
 
 ### Added
