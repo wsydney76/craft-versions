@@ -40,18 +40,24 @@
 
 {% block content %}
 
-    {% set entries = craft.entries.site(site).unique().preferSites([preferSite]).anyStatus().drafts(true).orderBy('dateCreated desc').all() %}
+
+    {% set showInternal = craft.versions.showInternal %}
+
+    {% set entries = craft.versions.getAllDrafts(site, preferSite) %}
 
     {% if entries %}
         <table id="entries" class="data fullwidth collapsible">
             <thead>
             <tr>
                 <th scope="col">{{ "Title"|t('versions') }}</th>
+                <th scope="col">{{ "Slug"|t('versions') }}</th>
                 <th scope="col">{{ "Section"|t('versions') }}</th>
                 <th scope="col">{{ "ID"|t('versions') }}</th>
                 <th scope="col">{{ "Date created"|t('versions') }}</th>
                 <th scope="col">{{ "Date updated"|t('versions') }}</th>
-                <th scope="col">{{ "Internal"|t('versions') }}</th>
+                {% if showInternal %}
+                    <th scope="col">{{ "Internal"|t('versions') }}</th>
+                {% endif %}
 
             </tr>
             </thead>
@@ -73,6 +79,10 @@
                            href="{{ cpUrl("entries/#{section}/#{entry.sourceId}", {site:site,draftId:entry.draftId,fresh:entry.isUnsavedDraft}) }}">{{ entry.title }}</a>
                     </th>
 
+                    <td data-title="slug">
+                        {{ entry.slug }}
+                    </td>
+
                     <td data-title="section">
                         {{ entry.section.name }}
                     </td>
@@ -82,17 +92,18 @@
                     </td>
 
                     <td data-title="dateCreated">
-                        {{ entry.dateCreated|datetime('Y-m-d G:i') }}
+                        {{ entry.versionCreated|datetime('Y-m-d G:i') }}
                     </td>
                     <td data-title="dateUpdated">
                         {{ entry.dateUpdated|datetime('Y-m-d G:i') }}
                     </td>
-                    <td data-title="internal">
-                        ID: {{ entry.id }}
-                        Draft ID: {{ entry.draftId }}
-                        Source ID: {{ entry.sourceId }}
-                    </td>
-
+                    {% if showInternal %}
+                        <td data-title="internal">
+                            ID: {{ entry.id }}
+                            Draft ID: {{ entry.draftId }}
+                            Source ID: {{ entry.sourceId }}
+                        </td>
+                    {% endif %}
 
                 </tr>
             {% endfor %}
