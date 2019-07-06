@@ -1,0 +1,15 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.selectField({
+    first: true,
+    label: 'Show Internal Column'|t('versions'),
+    name: 'showInternal',
+    instructions: 'Show internal informations like ids'|t('versions'),
+    options:[
+        {label: 'Never'|t('versions'), value:'never'},
+        {label: 'Always'|t('versions'), value:'always'},
+        {label: 'Show for admin users only'|t('versions'), value:'admin'},
+        {label: 'Only when devMode=true'|t('versions'), value:'dev'}
+    ],
+    value: settings.showInternal
+}) }}

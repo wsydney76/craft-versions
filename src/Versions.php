@@ -3,9 +3,20 @@
 namespace wsydney76\versions;
 
 use Craft;
+use craft\base\Model;
+use craft\base\Plugin;
 use craft\elements\Entry;
+use craft\events\DefineBehaviorsEvent;
 use craft\events\RegisterCpNavItemsEvent;
 use craft\web\twig\variables\Cp;
+use craft\web\twig\variables\CraftVariable;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+
+use wsydney76\versions\behaviors\EntryBehavior;
+use wsydney76\versions\models\SettingsModel;
+use wsydney76\versions\services\VersionsService;
 use yii\base\Event;
 use function array_splice;
 
@@ -26,8 +37,10 @@ use function array_splice;
  * Learn more about Yii module development in Yii's documentation:
  * http://www.yiiframework.com/doc-2.0/guide-structure-modules.html
  */
-class Versions extends \craft\base\Plugin
+class Versions extends Plugin
 {
+
+    public $hasCpSettings = true;
     /**
      * Initializes the module.
      */
@@ -69,7 +82,42 @@ class Versions extends \craft\base\Plugin
             }
         });
 
+        // Register Service as Craft Variable
+        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function (Event $e) {
+            $e->sender->set('versions', VersionsService::class);
+        });
+
+        // Register Behaviors
+        Event::on(
+            Entry::class,
+            Entry::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event){
+                if (Craft::$app->request->isCpRequest) {
+                    $event->behaviors[] = EntryBehavior::class;
+                }
+        });
+
         parent::init();
+    }
+
+    /**
+     * @return Model|SettingsModel|null
+     */
+    protected function createSettingsModel()
+    {
+        return new SettingsModel();
+    }
+
+    /**
+     * @return string|null
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    protected function settingsHtml()
+    {
+        return Craft::$app->view->renderTemplate('versions/settings', [
+            'settings' => $this->getSettings()
+        ]);
     }
 
 }
