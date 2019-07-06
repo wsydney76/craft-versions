@@ -9,16 +9,17 @@
     {% exit 400 %}
 {% endif %}
 
-{% set entry = craft.entries.site(site).anyStatus.id(id).one %}
+{% set entry = craft.versions.entryById(id, site) %}
 {% if not entry %}
     {% exit 404 %}
 {% endif %}
 
-{% set entries = craft.entries.site('*').anyStatus.id(entry.id).all %}
 
 {% set title = "#{entry.section.name} #{entry.title}: #{'Drafts and Revisions'|t('versions')}" %}
 
 {% block sidebar %}
+    {% set entries = entry.entriesForAllSites %}
+
     {% if entries|length > 1 %}
     <nav>
         <ul>

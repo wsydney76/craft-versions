@@ -1,5 +1,8 @@
 {% from 'versions/macros.twig' import versionsTable %}
 
+
+{% set showInternal = craft.versions.showInternal %}
+
 <table class="data fullwidth collapsible">
     <thead>
     <tr>
@@ -7,30 +10,31 @@
         <th>{{ "Name"|t('versions') }}</th>
         <th>{{ "Slug"|t('versions') }}</th>
         <th>{{ "Status"|t('versions') }}</th>
+        <th>{{ "Date created"|t('versions') }}</th>
         <th>{{ "Date updated"|t('versions') }}</th>
         <th>{{ "Creator"|t('versions') }}</th>
         <th>{{ "Notes"|t('versions') }}</th>
+        {% if showInternal %}
         <th>{{ "Internal"|t('versions') }}</th>
+        {% endif %}
     </tr>
     </thead>
 
 
-    {% set drafts = craft.entries.site(site).anyStatus.draftOf(id).orderBy('id desc').all %}
-    {{ versionsTable('Drafts'|t('versions'), drafts, entry.cpEditUrl) }}
+    {{ versionsTable('Drafts'|t('versions'), entry.drafts, entry.cpEditUrl, showInternal) }}
 
-    {% set revisions = craft.entries.site(site).anyStatus.revisionOf(id).orderBy('num desc').all %}
-    {{ versionsTable('Revisions'|t('versions'), revisions, entry.cpEditUrl) }}
+    {{ versionsTable('Revisions'|t('versions'), entry.revisions, entry.cpEditUrl,showInternal) }}
 
 </table>
 
 <p>
-{{ "Maximal number of saved revisions"|t('versions') }}: {{ craft.app.config.general.maxRevisions }}
+    {{ "Maximal number of saved revisions"|t('versions') }}: {{ craft.app.config.general.maxRevisions }}
 </p>
 
 {% css %}
     .versions-heading {
-        padding:12px 0px 12px 6px !important;
-        background-color: #E7EEF3;
-        font-weight:bold;
+    padding:12px 0px 12px 6px !important;
+    background-color: #E7EEF3;
+    font-weight:bold;
     }
 {% endcss %}
