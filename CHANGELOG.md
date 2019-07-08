@@ -1,5 +1,11 @@
 # Release Notes for Versions
 
+## 1.1.3 2019-07-08
+
+### Added
+
+Added warning then entry was updated (via HUD for example) after a draft was created.
+
 ## 1.1.2 2019-07-08
 
 ### Known Issues

@@ -12,6 +12,7 @@ return [
     'Drafts and Revisions' => 'Entwürfe und Revisionen',
     'Drafts' => 'Entwürfe',
     'Edit' => 'Bearbeiten',
+    'Entry has been updated after this draft has been created' => 'Eintrag wurde geändert nachdem dieser Entwurf erstellt wurde',
     'Internal' => 'Intern',
     'Maximal number of saved revisions' => 'Maximale Anzahl gespeicherter Revisionen',
     'Never' => 'Niemals',
