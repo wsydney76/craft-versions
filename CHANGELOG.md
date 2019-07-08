@@ -1,5 +1,11 @@
 # Release Notes for Versions
 
+## 1.1.2 2019-07-08
+
+### Known Issues
+
+* Added notice for drafts that belong to soft-deleted drafts.
+
 ## 1.1.1 2019-07-06
 
 ### Added
