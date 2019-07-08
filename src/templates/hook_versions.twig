@@ -7,7 +7,14 @@
             <div class="versions-danger">
                 {{ "This entry is trashed"|t('versions') }}
             </div>
+        {% elseif entry.isDraft and test.dateUpdated> entry.versionCreated %}
+            <div class="versions-danger">
+                {{ "Entry has been updated after this draft has been created"|t('versions') }}!
+            </div>
         {% endif %}
+
+
+
     {% endif %}
 
     {% for draft in drafts %}
