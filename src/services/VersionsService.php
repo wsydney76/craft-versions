@@ -16,7 +16,7 @@ class VersionsService extends Component
     public function showInternal()
     {
 
-        $showInternalSetting = Versions::getInstance()->getSettings()->showInternal;
+        $showInternalSetting = Versions::$plugin->getSettings()->showInternal;
 
         return $showInternalSetting == 'always'
             || ($showInternalSetting == 'admin' && Craft::$app->user->getIdentity()->admin)
@@ -39,14 +39,26 @@ class VersionsService extends Component
      */
     public function getAllDrafts(string $site, string $preferSite)
     {
+
         return Entry::find()
             ->site($site)
             ->unique()
             ->preferSites([$preferSite])
             ->anyStatus()
             ->drafts(true)
+            ->andWhere(['not like','title','__temp'])
             ->orderBy('dateCreated desc')
             ->all();
+    }
+
+    public function getDraftsCount() {
+        return Entry::find()
+            ->site('*')
+            ->unique()
+            ->anyStatus()
+            ->drafts(true)
+            ->andWhere(['not like','title','__temp'])
+            ->count();
     }
 
 }

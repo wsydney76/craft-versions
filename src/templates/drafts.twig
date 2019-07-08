@@ -76,7 +76,7 @@
 
                     <th data-title="Title">
                         <a class="go"
-                           href="{{ cpUrl("entries/#{section}/#{entry.sourceId}", {site:site,draftId:entry.draftId,fresh:entry.isUnsavedDraft}) }}">{{ entry.title }}</a>
+                           href="{{ cpUrl("entries/#{section}/#{entry.sourceId}", {site:site,draftId:entry.draftId,fresh:entry.isUnsavedDraft}) }}">{{ entry.title?:'[untitled]' }}</a>
                     </th>
 
                     <td data-title="slug">
