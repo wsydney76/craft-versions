@@ -1,16 +1,36 @@
 <div class="meta">
 
+    {% if not entry.isUnsavedDraft %}
+        {% set test = craft.entries.id(entry.sourceId).one %}
+
+        {% if not test %}
+            <div class="versions-danger">
+                {{ "This entry is trashed"|t('versions') }}
+            </div>
+        {% endif %}
+    {% endif %}
+
     {% for draft in drafts %}
-        <a class="btn submit versions-button" href="{{ draft.cpEditUrl }}&draftId={{ draft.draftId }}">{{ draft.draftName }}</a>
+        <a class="btn submit versions-button"
+           href="{{ draft.cpEditUrl }}&draftId={{ draft.draftId }}">{{ draft.draftName }}</a>
     {% endfor %}
 
     {% if entry.id and not entry.isUnsavedDraft %}
-        <a class="btn versions-button" href="{{ cpUrl('versions/drafts-revisions',{id:entry.sourceId, site:entry.site.handle}) }}">{{ "Drafts and Revisions"|t('versions') }}</a>
+        <a class="btn versions-button"
+           href="{{ cpUrl('versions/drafts-revisions',{id:entry.sourceId, site:entry.site.handle}) }}">{{ "Drafts and Revisions"|t('versions') }}</a>
     {% endif %}
 </div>
 {% css %}
     .versions-button {
-        margin-bottom:6px;
+    margin-bottom:6px;
+    }
+    .versions-danger {
+    padding:12px;
+    color:red;
+    font-weight:bold;
+    border: 1px solid red;
+    background-color: #FE9E9E;
+    margin-bottom:12px;
     }
 {% endcss %}
 

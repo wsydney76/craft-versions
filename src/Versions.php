@@ -40,18 +40,25 @@ use function array_splice;
 class Versions extends Plugin
 {
 
+    static $plugin;
+
     public $hasCpSettings = true;
     /**
      * Initializes the module.
      */
     public function init()
     {
+        $this->setComponents([
+            'versions' => VersionsService::class
+            ]);
+
+        self::$plugin = $this;
 
         // Set Nav
         Event::on(
             Cp::class,
             Cp::EVENT_REGISTER_CP_NAV_ITEMS, function(RegisterCpNavItemsEvent $event) {
-            $count = Entry::find()->site('*')->unique()->anyStatus()->drafts(true)->count();
+            $count = $this->versions->getDraftsCount();
             $nav = [
                 'url' => 'versions/drafts',
                 'label' => Craft::t('versions', 'Drafts'),

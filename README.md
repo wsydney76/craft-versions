@@ -12,3 +12,7 @@ This is not an 'official plugin', see it a some kind
 of 'proof of concept'.
 
 Only intended for private use. No support.
+
+### Known issues
+
+* Shows drafts of soft deleted items.   

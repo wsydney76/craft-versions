@@ -24,6 +24,7 @@ return [
     'Show for admin users only' => 'Nur für Admins anzeigen',
     'Show Internal Column' => 'Spalte Intern anzeigen',
     'Show internal informations like ids' => 'Sollen interne Informations wie IDs angezeigt werden',
+    'This entry is trashed' => 'Dieser Eintrag liegt im Papierkorb',
     'Title' => 'Titel',
     'Unsaved' => 'Ungespeichert',
     'View' => 'Anschauen',
