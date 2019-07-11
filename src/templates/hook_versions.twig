@@ -1,7 +1,7 @@
 <div class="meta">
 
     {% if not entry.isUnsavedDraft %}
-        {% set test = craft.entries.id(entry.sourceId).one %}
+        {% set test = craft.entries.site('*').anyStatus().id(entry.sourceId).one %}
 
         {% if not test %}
             <div class="versions-danger">
