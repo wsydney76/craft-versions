@@ -1,5 +1,12 @@
 # Release Notes for Versions
 
+## 1.1.4 2019-07-11
+
+### Fixed
+
+* Fixed a bug, where incorrect warning about an entry beeing soft delete could occur.
+
+
 ## 1.1.3 2019-07-08
 
 ### Added
