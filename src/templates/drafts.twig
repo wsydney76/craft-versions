@@ -5,6 +5,14 @@
 {% set site = craft.app.request.param('site') ?: '*' %}
 {% set preferSite = craft.app.request.param('site') ?: craft.app.sites.primarySite.handle %}
 
+{% if site == '*' and not currentUser.can("editsite:#{craft.app.sites.primarySite.uid}") %}
+    {% for curSite in craft.app.sites.allSites %}
+    	{% if currentUser.can("editsite:#{curSite.uid}") %}
+            {% set preferSite = curSite.handle %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
 {% block sidebar %}
     <nav>
         <ul>
@@ -22,10 +30,13 @@
                     <span class="label">{{ "Saved"|t('versions') }}</span></a>
             </li>
 
+
+
             {% set allSites = craft.app.sites.allSites %}
             {% if allSites|length > 1 %}
                 <li class="heading"><span>{{ "By sites"|t('versions') }}</span></li>
-                {% for curSite in allSites %}
+                {% for curSite in allSites
+                    if currentUser.can("editsite:#{curSite.uid}")  %}
                     <li>
                         <a class="{{ site == curSite.handle ?'sel' }}"
                            href="{{ cpUrl('versions/drafts',{site:curSite.handle}) }}">
@@ -75,8 +86,15 @@
                 <tr data-id="{{ entry.id }}" data-name="{{ entry.title }}">
 
                     <th data-title="Title">
+                        {% set url =
+                            currentUser.can("editsite:#{entry.site.uid}") ?
+                            cpUrl("entries/#{section}/#{entry.sourceId}", {site:site,draftId:entry.draftId,fresh:entry.isUnsavedDraft})  : ''%}
+                        {% if url %}
                         <a class="go"
-                           href="{{ cpUrl("entries/#{section}/#{entry.sourceId}", {site:site,draftId:entry.draftId,fresh:entry.isUnsavedDraft}) }}">{{ entry.title?:'[untitled]' }}</a>
+                           href="{{ url }}">{{ entry.title?:'[untitled]' }}</a>
+                        {% else %}
+                            {{ entry.title }}
+                        {% endif %}
                     </th>
 
                     <td data-title="slug">
