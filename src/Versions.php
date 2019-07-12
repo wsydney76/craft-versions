@@ -62,6 +62,7 @@ class Versions extends Plugin
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
             function(RegisterUrlRulesEvent $event) {
                 $event->rules['versions/drafts'] = ['template' => 'versions/drafts'];
+                $event->rules['versions/drafts-revisions'] = ['template' => 'versions/drafts-revisions'];
             }
         );
 
