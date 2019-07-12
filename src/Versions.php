@@ -8,12 +8,13 @@ use craft\base\Plugin;
 use craft\elements\Entry;
 use craft\events\DefineBehaviorsEvent;
 use craft\events\RegisterCpNavItemsEvent;
+use craft\events\RegisterUrlRulesEvent;
 use craft\web\twig\variables\Cp;
 use craft\web\twig\variables\CraftVariable;
+use craft\web\UrlManager;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-
 use wsydney76\versions\behaviors\EntryBehavior;
 use wsydney76\versions\models\SettingsModel;
 use wsydney76\versions\services\VersionsService;
@@ -53,6 +54,17 @@ class Versions extends Plugin
             ]);
 
         self::$plugin = $this;
+
+        // Register CP Routes
+        // We need to set this up here, to avoid permission failures for non admins
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_CP_URL_RULES,
+            function(RegisterUrlRulesEvent $event) {
+                $event->rules['versions/drafts'] = ['template' => 'versions/drafts'];
+                $event->rules['versions/drafts-revisions'] = ['template' => 'versions/drafts-revisions'];
+            }
+        );
 
         // Set Nav
         Event::on(
