@@ -1,10 +1,10 @@
 # Release Notes for Versions
 
-## 1.1.5 2019-07-12
+## 1.1.5.1 2019-07-12
 
 ### Fixed
 
-* Fixed a bug, where access permissions were denied for non admins
+* Fixed a bug, where access permissions were denied for non admins. Hopefully
 
 ## 1.1.4 2019-07-11
 
