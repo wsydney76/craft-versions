@@ -8,10 +8,10 @@ use craft\base\Plugin;
 use craft\elements\Entry;
 use craft\events\DefineBehaviorsEvent;
 use craft\events\RegisterCpNavItemsEvent;
-use craft\events\RegisterUrlRulesEvent;
+use craft\events\RegisterUserPermissionsEvent;
+use craft\services\UserPermissions;
 use craft\web\twig\variables\Cp;
 use craft\web\twig\variables\CraftVariable;
-use craft\web\UrlManager;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -55,15 +55,16 @@ class Versions extends Plugin
 
         self::$plugin = $this;
 
-        // Register CP Routes
-        // We need to set this up here, to avoid permission failures for non admins
+        // Create Permissions
         Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_CP_URL_RULES,
-            function(RegisterUrlRulesEvent $event) {
-                $event->rules['versions/drafts'] = ['template' => 'versions/drafts'];
-                $event->rules['versions/drafts-revisions'] = ['template' => 'versions/drafts-revisions'];
-            }
+            UserPermissions::class,
+            UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event) {
+            $event->permissions['Versions'] = [
+                'accessPlugin-versions' => [
+                    'label' => 'View Drafts and Revisions',
+                ]
+            ];
+        }
         );
 
         // Set Nav
