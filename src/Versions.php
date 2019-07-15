@@ -44,6 +44,7 @@ class Versions extends Plugin
     static $plugin;
 
     public $hasCpSettings = true;
+
     /**
      * Initializes the module.
      */
@@ -51,7 +52,7 @@ class Versions extends Plugin
     {
         $this->setComponents([
             'versions' => VersionsService::class
-            ]);
+        ]);
 
         self::$plugin = $this;
 
@@ -71,19 +72,21 @@ class Versions extends Plugin
         Event::on(
             Cp::class,
             Cp::EVENT_REGISTER_CP_NAV_ITEMS, function(RegisterCpNavItemsEvent $event) {
-            $count = $this->versions->getDraftsCount();
-            $nav = [
-                'url' => 'versions/drafts',
-                'label' => Craft::t('versions', 'Drafts'),
-                'icon' => '@app/icons/field.svg',
-                'badgeCount' => $count
-            ];
-            foreach ($event->navItems as $i => $navItem) {
-                if ($navItem['url'] == 'entries') {
-                    break;
+            if (Craft::$app->user->identity->can('accessPlugin-versions')) {
+                $count = $this->versions->getDraftsCount();
+                $nav = [
+                    'url' => 'versions/drafts',
+                    'label' => Craft::t('versions', 'Drafts'),
+                    'icon' => '@app/icons/field.svg',
+                    'badgeCount' => $count
+                ];
+                foreach ($event->navItems as $i => $navItem) {
+                    if ($navItem['url'] == 'entries') {
+                        break;
+                    }
                 }
+                array_splice($event->navItems, $i + 1, 0, [$nav]);
             }
-            array_splice($event->navItems, $i + 1, 0, [$nav]);
         });
 
         // Register Edit Screen extensions
@@ -103,17 +106,17 @@ class Versions extends Plugin
         });
 
         // Register Service as Craft Variable
-        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function (Event $e) {
+        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $e) {
             $e->sender->set('versions', VersionsService::class);
         });
 
         // Register Behaviors
         Event::on(
             Entry::class,
-            Entry::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event){
-                if (Craft::$app->request->isCpRequest) {
-                    $event->behaviors[] = EntryBehavior::class;
-                }
+            Entry::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) {
+            if (Craft::$app->request->isCpRequest) {
+                $event->behaviors[] = EntryBehavior::class;
+            }
         });
 
         parent::init();

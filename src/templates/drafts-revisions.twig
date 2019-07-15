@@ -24,7 +24,8 @@
     <nav>
         <ul>
             <li class="heading"><span>{{ "By sites"|t('versions') }}</span></li>
-            {% for curEntry in entries %}
+            {% for curEntry in entries
+                if currentUser.can("editsite:#{curEntry.site.uid}")  %}
                 <li>
                     <a class="{{ site == curEntry.site.handle ?'sel' }}"
                        href="{{ cpUrl('versions/drafts-revisions',{id:id, site:curEntry.site.handle}) }}">
