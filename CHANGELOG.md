@@ -1,5 +1,7 @@
 # Release Notes for Versions
 
+
+
 ## 1.1.5.2 2019-07-15
 
 * Improvements for users who are only permitted to edit a subset of sites.
