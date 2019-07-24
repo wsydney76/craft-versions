@@ -41,3 +41,10 @@
     }
 {% endcss %}
 
+{% if craft.app.plugins.plugin('versions').settings['disablePreviewForSourceEntries'] %}
+    {% if not entry.isDraft and not entry.isRevision %}
+        {% css %}
+            #preview-btn {display:none}
+        {% endcss %}
+    {% endif %}
+{% endif %}

@@ -13,3 +13,13 @@
     ],
     value: settings.showInternal
 }) }}
+
+Switch {{ settings.disablePreviewForSourceEntries  }}
+
+{{ forms.lightswitchField({
+    label: 'Disable Preview for source entries'|t('versions'),
+    name: 'disablePreviewForSourceEntries',
+    instructions: 'If enabled, the preview button will not be shown for source entries, therefor the user has to create a draft manually'|t('versions'),
+    on: settings.disablePreviewForSourceEntries
+
+}) }}
