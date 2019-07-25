@@ -96,16 +96,7 @@ class Versions extends Plugin
         // Register Edit Screen extensions
         Craft::$app->view->hook('cp.entries.edit.details', function(&$context) {
             if ($context['entry'] != null) {
-                $entry = $context['entry'];
-                $drafts = [];
-                if ($entry->id && !$entry->isDraft) {
-                    $drafts = Entry::find()->draftOf($entry->id)->anyStatus()->siteId($entry->siteId)->all();
-                }
-                return Craft::$app->view->renderTemplate('versions/hook_versions.twig',
-                    [
-                        'entry' => $entry,
-                        'drafts' => $drafts
-                    ]);
+                return Craft::$app->view->renderTemplate('versions/hook_versions.twig', ['entry' => $context['entry']]);
             }
         });
 
@@ -154,5 +145,4 @@ class Versions extends Plugin
             'settings' => $this->getSettings()
         ]);
     }
-
 }

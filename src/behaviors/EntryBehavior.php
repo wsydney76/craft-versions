@@ -7,16 +7,21 @@ use craft\elements\Entry;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\ElementHelper;
 use craft\records\Entry as EntryRecord;
+use wsydney76\versions\Versions;
 use yii\base\Behavior;
 
 class EntryBehavior extends Behavior
 {
     public function getDrafts()
     {
+        $entry = $this->owner;
+        if (ElementHelper::isDraftOrRevision($entry) || ! $entry->id) {
+            return [];
+        }
         return Entry::find()
-            ->site($this->owner->site)
+            ->site($entry->site)
             ->anyStatus()
-            ->draftOf($this->owner->id)
+            ->draftOf($entry->id)
             ->orderBy('id desc')
             ->all();
     }
@@ -57,7 +62,7 @@ class EntryBehavior extends Behavior
         }
 
         if (!Craft::$app->user->can('ignoreVersionsRestrictions')) {
-            $settings = Craft::$app->plugins->getPlugin('versions')->settings;
+            $settings = Versions::$plugin->settings;
             if (isset($settings['allowEditSourceIfDraftsExist']) && !$settings['allowEditSourceIfDraftsExist']) {
                 if (count($this->getDrafts())) {
                     return false;

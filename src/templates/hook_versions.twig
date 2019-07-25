@@ -1,4 +1,5 @@
 {% set isSource = not entry.isDraft and not entry.isRevision %}
+{% set drafts = entry.drafts %}
 
 <div class="meta">
     {% if not isSource %}
@@ -51,6 +52,7 @@
 if (window.draftEditor) {
     window.draftEditor.on('createDraft', function() {
         $('.flex-grow').html('');
+        $('#preview-btn').css('display','block');
     });
 }
 {% endjs %}
