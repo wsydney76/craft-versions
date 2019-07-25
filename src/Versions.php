@@ -118,7 +118,7 @@ class Versions extends Plugin
         Event::on(
             Entry::class,
             Entry::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) {
-            if (Craft::$app->request->isCpRequest) {
+            if (Craft::$app->request->isCpRequest || Craft::$app->request->isConsoleRequest) {
                 $event->behaviors[] = EntryBehavior::class;
             }
         });

@@ -47,6 +47,14 @@
     {% endjs %}
 {% endif %}
 
+{% js %}
+if (window.draftEditor) {
+    window.draftEditor.on('createDraft', function() {
+        $('.flex-grow').html('');
+    });
+}
+{% endjs %}
+
 {% css %}
     .versions-button {
     margin-bottom:6px;

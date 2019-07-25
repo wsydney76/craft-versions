@@ -61,6 +61,7 @@
             <thead>
             <tr>
                 <th scope="col">{{ "Title"|t('versions') }}</th>
+                <th scope="col">{{ "Name"|t('versions') }}</th>
                 <th scope="col">{{ "Slug"|t('versions') }}</th>
                 <th scope="col">{{ "Section"|t('versions') }}</th>
                 <th scope="col">{{ "ID"|t('versions') }}</th>
@@ -85,7 +86,7 @@
 
                 <tr data-id="{{ entry.id }}" data-name="{{ entry.title }}">
 
-                    <th data-title="Title">
+                    <td data-title="Title">
                         {% set url =
                             currentUser.can("editsite:#{entry.site.uid}") ?
                             cpUrl("entries/#{section}/#{entry.sourceId}", {site:site,draftId:entry.draftId,fresh:entry.isUnsavedDraft})  : ''%}
@@ -95,8 +96,12 @@
                         {% else %}
                             {{ entry.title }}
                         {% endif %}
-                    </th>
+                    </td>
 
+                    <td>
+                        {{ entry.isDraft ? entry.draftName }}
+                    </td>
+                    
                     <td data-title="slug">
                         {{ entry.slug }}
                     </td>
