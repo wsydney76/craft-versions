@@ -14,12 +14,27 @@
     value: settings.showInternal
 }) }}
 
-Switch {{ settings.disablePreviewForSourceEntries  }}
 
 {{ forms.lightswitchField({
-    label: 'Disable Preview for source entries'|t('versions'),
-    name: 'disablePreviewForSourceEntries',
+    label: 'Enabled preview for source entries'|t('versions'),
+    name: 'allowPreviewForSourceEntries',
     instructions: 'If enabled, the preview button will not be shown for source entries, therefor the user has to create a draft manually'|t('versions'),
-    on: settings.disablePreviewForSourceEntries
+    on: settings.allowPreviewForSourceEntries
+
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Allow edit source if draft exists'|t('versions'),
+    name: 'allowEditSourceIfDraftsExist',
+    instructions: 'If enabled, it will be possible to edit the source version if one or more drafts exist'|t('versions'),
+    on: settings.allowEditSourceIfDraftsExist
+
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Allow multiple drafts'|t('versions'),
+    name: 'allowMultipleDrafts',
+    instructions: 'If enabled, it will be possible to create multiple drafts'|t('versions'),
+    on: settings.allowMultipleDrafts
 
 }) }}
