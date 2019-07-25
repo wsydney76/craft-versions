@@ -7,6 +7,7 @@ use craft\base\Model;
 use craft\base\Plugin;
 use craft\elements\Entry;
 use craft\events\DefineBehaviorsEvent;
+use craft\events\ModelEvent;
 use craft\events\RegisterCpNavItemsEvent;
 use craft\events\RegisterUserPermissionsEvent;
 use craft\services\UserPermissions;
@@ -63,6 +64,9 @@ class Versions extends Plugin
             $event->permissions['Versions'] = [
                 'accessPlugin-versions' => [
                     'label' => 'View Drafts and Revisions',
+                ],
+                'ignoreVersionsRestrictions' => [
+                    'label' => 'Ignore Workflow Restrictions'
                 ]
             ];
         }
@@ -95,7 +99,7 @@ class Versions extends Plugin
                 $entry = $context['entry'];
                 $drafts = [];
                 if ($entry->id && !$entry->isDraft) {
-                    $drafts = Entry::find()->draftOf($entry->id)->siteId($entry->siteId)->all();
+                    $drafts = Entry::find()->draftOf($entry->id)->anyStatus()->siteId($entry->siteId)->all();
                 }
                 return Craft::$app->view->renderTemplate('versions/hook_versions.twig',
                     [
@@ -118,6 +122,14 @@ class Versions extends Plugin
                 $event->behaviors[] = EntryBehavior::class;
             }
         });
+
+        // Save
+        Event::on(
+            Entry::class,
+            Entry::EVENT_BEFORE_SAVE, function(ModelEvent $event) {
+            $event->isValid = $event->sender->canSave();
+        }
+        );
 
         parent::init();
     }

@@ -1,50 +1,82 @@
+{% set isSource = not entry.isDraft and not entry.isRevision %}
+
 <div class="meta">
-
-    {% if not entry.isUnsavedDraft %}
-        {% set test = craft.entries.site('*').anyStatus().id(entry.sourceId).one %}
-
-        {% if not test %}
-            <div class="versions-danger">
-                {{ "This entry is trashed"|t('versions') }}
-            </div>
-        {% elseif entry.isDraft and test.dateUpdated> entry.versionCreated %}
-            <div class="versions-danger">
-                {{ "Entry has been updated after this draft has been created"|t('versions') }}!
-            </div>
-        {% endif %}
-
-
-
+    {% if not isSource %}
+        {% set headerHtml %}
+            {% if not entry.isUnsavedDraft %}
+                {% set test = craft.entries.site('*').anyStatus().id(entry.sourceId).one %}
+                {% if not test %}
+                    {{ "Entry is trashed"|t('versions') }}
+                {% elseif entry.isDraft and test.dateUpdated> entry.versionCreated %}
+                    {{ "Draft possibly outdated"|t('versions') }}!
+                {% endif %}
+            {% endif %}
+        {%- endset %}
     {% endif %}
 
-    {% for draft in drafts %}
-        <a class="btn submit versions-button"
-           href="{{ draft.cpEditUrl }}&draftId={{ draft.draftId }}">{{ draft.draftName }}</a>
-    {% endfor %}
+    {% if isSource %}
+        {#
+        {% for draft in drafts %}
+            <a class="btn submit versions-button"
+               href="{{ draft.cpEditUrl }}&draftId={{ draft.draftId }}">{{ draft.draftName }}</a>
+        {% endfor %}
+         #}
+        {% if drafts %}
+            {% set headerHtml %}
+                {% if drafts|length <= 2 %}
+                    {% for draft in drafts %}
+                        <a class="btn submit versions-button" style="margin-bottom: 0px"
+                           href="{{ draft.cpEditUrl }}&draftId={{ draft.draftId }}">{{ "Edit #{draft.draftName}"|t('versions') }}</a>
+                    {% endfor %}
+                {% else %}
+                    {{ "{count} Drafts exist"|t('versions',{count:drafts|length}) }}
+                {% endif %}
+            {% endset %}
+        {% endif %}
+    {% endif %}
 
     {% if entry.id and not entry.isUnsavedDraft %}
         <a class="btn versions-button"
            href="{{ cpUrl('versions/drafts-revisions',{id:entry.sourceId, site:entry.site.handle}) }}">{{ "Drafts and Revisions"|t('versions') }}</a>
     {% endif %}
 </div>
+
+{% if headerHtml is defined %}
+    {% js %}
+        $('.flex-grow').html(`<span class="versions-danger">{{ headerHtml|raw }}</span>`);
+    {% endjs %}
+{% endif %}
+
 {% css %}
     .versions-button {
     margin-bottom:6px;
     }
     .versions-danger {
-    padding:12px;
     color:red;
     font-weight:bold;
-    border: 1px solid red;
-    background-color: #FE9E9E;
     margin-bottom:12px;
     }
 {% endcss %}
 
-{% if craft.app.plugins.plugin('versions').settings['disablePreviewForSourceEntries'] %}
-    {% if not entry.isDraft and not entry.isRevision %}
+{% if not currentUser.can('ignoreVersionsRestrictions') %}
+    {% set settings = craft.app.plugins.plugin('versions').settings %}
+    {% if isSource and not settings['allowPreviewForSourceEntries'] %}
         {% css %}
             #preview-btn {display:none}
         {% endcss %}
+    {% endif %}
+    {% if isSource and not settings['allowEditSourceIfDraftsExist'] %}
+        {% if drafts|length %}
+            {% css %}
+                #save-btn-container {display:none}
+            {% endcss %}
+        {% endif %}
+    {% endif %}
+    {% if isSource and not settings['allowMultipleDrafts'] %}
+        {% if drafts|length %}
+            {% css %}
+                #save-draft-btn-container {display:none}
+            {% endcss %}
+        {% endif %}
     {% endif %}
 {% endif %}

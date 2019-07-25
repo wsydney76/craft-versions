@@ -7,6 +7,8 @@ use craft\base\Model;
 class SettingsModel extends Model
 {
     public $showInternal = 'never';
-    public $disablePreviewForSourceEntries = 1;
+    public $allowPreviewForSourceEntries = 1;
+    public $allowEditSourceIfDraftsExist = 1;
+    public $allowMultipleDrafts = 1;
 
 }
