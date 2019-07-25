@@ -1,5 +1,17 @@
 # Release Notes for Versions
 
+## 1.1.7 2019-07-25
+
+### Added 
+
+* Setting to prevent editing source entry when drafts exist
+* Setting to disable the creation of multiple drafts.
+* Permission to ignore all restrictive settings
+
+### Changed
+
+* Warnings and 'Edit Drafts' buttons are moved to the header of the entries edit page.
+
 ## 1.1.6 2019-07-24
 
 ### Added
