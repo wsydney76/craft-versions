@@ -1,4 +1,5 @@
 {% set isSource = not entry.isDraft and not entry.isRevision %}
+{% set drafts = entry.drafts %}
 
 <div class="meta">
     {% if not isSource %}
@@ -26,7 +27,9 @@
                 {% if drafts|length <= 2 %}
                     {% for draft in drafts %}
                         <a class="btn submit versions-button" style="margin-bottom: 0px"
-                           href="{{ draft.cpEditUrl }}&draftId={{ draft.draftId }}">{{ "Edit #{draft.draftName}"|t('versions') }}</a>
+                           href="{{ draft.cpEditUrl }}&draftId={{ draft.draftId }}">
+                            {{ "Edit #{draft.draftName}" }}
+                        </a>
                     {% endfor %}
                 {% else %}
                     {{ "{count} Drafts exist"|t('versions',{count:drafts|length}) }}
@@ -47,6 +50,15 @@
     {% endjs %}
 {% endif %}
 
+{% js %}
+    if (window.draftEditor) {
+    window.draftEditor.on('createDraft', function() {
+    $('.flex-grow').html('');
+    $('#preview-btn').css('display','block');
+    });
+    }
+{% endjs %}
+
 {% css %}
     .versions-button {
     margin-bottom:6px;
@@ -65,13 +77,14 @@
             #preview-btn {display:none}
         {% endcss %}
     {% endif %}
-    {% if isSource and not settings['allowEditSourceIfDraftsExist'] %}
-        {% if drafts|length %}
-            {% css %}
-                #save-btn-container {display:none}
-            {% endcss %}
-        {% endif %}
+
+    {% set allowEditSource = settings['allowEditSource'] %}
+    {% if isSource and (allowEditSource == 'never' or (allowEditSource == 'nodrafts' and drafts|length)) %}
+        {% css %}
+            #save-btn-container {display:none}
+        {% endcss %}
     {% endif %}
+
     {% if isSource and not settings['allowMultipleDrafts'] %}
         {% if drafts|length %}
             {% css %}

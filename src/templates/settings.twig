@@ -9,32 +9,50 @@
         {label: 'Never'|t('versions'), value:'never'},
         {label: 'Always'|t('versions'), value:'always'},
         {label: 'Show for admin users only'|t('versions'), value:'admin'},
-        {label: 'Only when devMode=true'|t('versions'), value:'dev'}
+        {label: 'Only if devMode=true'|t('versions'), value:'dev'}
     ],
     value: settings.showInternal
 }) }}
 
+{{ forms.selectField({
+    label: 'Allow edit source'|t('versions'),
+    name: 'allowEditSource',
+    instructions: 'Is editing and saving source entry allowed without using a draft'|t('versions'),
+    options:[
+        {label: 'Always'|t('versions'), value:'always'},
+        {label: 'Never'|t('versions'), value:'never'},
+        {label: 'Only if no drafts exist'|t('versions'), value:'nodrafts'}
+    ],
+    value: settings.allowEditSource
+}) }}
+
 
 {{ forms.lightswitchField({
-    label: 'Enabled preview for source entries'|t('versions'),
+    label: 'Enable preview for source entries'|t('versions'),
     name: 'allowPreviewForSourceEntries',
     instructions: 'If enabled, the preview button will not be shown for source entries, therefor the user has to create a draft manually'|t('versions'),
     on: settings.allowPreviewForSourceEntries
-
 }) }}
 
-{{ forms.lightswitchField({
-    label: 'Allow edit source if draft exists'|t('versions'),
-    name: 'allowEditSourceIfDraftsExist',
-    instructions: 'If enabled, it will be possible to edit the source version if one or more drafts exist'|t('versions'),
-    on: settings.allowEditSourceIfDraftsExist
 
-}) }}
 
 {{ forms.lightswitchField({
     label: 'Allow multiple drafts'|t('versions'),
     name: 'allowMultipleDrafts',
     instructions: 'If enabled, it will be possible to create multiple drafts'|t('versions'),
     on: settings.allowMultipleDrafts
-
 }) }}
+
+{% set options = craft.app.sections.allSections
+    |filter(s => s.type in ['channel','structure'])
+    |map(s => {label:s.name, value:s.handle}) %}
+
+{{ forms.checkboxSelectField({
+    label: 'Allow save via HUD'|t('versions'),
+    name: 'allowSaveHUD',
+    instructions: 'If enabled, it will always be possible to save an entry in a HUD'|t('versions'),
+    options: options,
+    values: settings.allowSaveHUD
+}) }}
+
+

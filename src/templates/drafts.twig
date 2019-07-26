@@ -1,17 +1,18 @@
 {% extends "_layouts/cp" %}
 {% set title = 'Drafts'|t('versions') %}
 
+{% set allowedSites = craft.versions.getAllowedSitesForUser(currentUser) %}
+
+{% if not allowedSites|length %}
+    {% exit 403 %}
+{% endif %}
+
 {% set status = craft.app.request.param('status') ?: 'all' %}
-{% set site = craft.app.request.param('site') ?: '*' %}
+{% set site = craft.app.request.param('site') ?: allowedSites %}
 {% set preferSite = craft.app.request.param('site') ?: craft.app.sites.primarySite.handle %}
 
-{% if site == '*' and not currentUser.can("editsite:#{craft.app.sites.primarySite.uid}") %}
-    {% for curSite in craft.app.sites.allSites %}
-    	{% if currentUser.can("editsite:#{curSite.uid}") %}
-            {% set preferSite = curSite.handle %}
-        {% endif %}
-    {% endfor %}
-{% endif %}
+
+{% set entries = craft.versions.getAllDrafts(site, allowedSites[0]) %}
 
 {% block sidebar %}
     <nav>
@@ -30,13 +31,10 @@
                     <span class="label">{{ "Saved"|t('versions') }}</span></a>
             </li>
 
-
-
-            {% set allSites = craft.app.sites.allSites %}
-            {% if allSites|length > 1 %}
+            {% if allowedSites|length > 1 %}
                 <li class="heading"><span>{{ "By sites"|t('versions') }}</span></li>
-                {% for curSite in allSites
-                    if currentUser.can("editsite:#{curSite.uid}")  %}
+                {% for handle in allowedSites %}
+                    {% set curSite = craft.app.sites.siteByHandle(handle) %}
                     <li>
                         <a class="{{ site == curSite.handle ?'sel' }}"
                            href="{{ cpUrl('versions/drafts',{site:curSite.handle}) }}">
@@ -51,7 +49,6 @@
 
 {% block content %}
 
-
     {% set showInternal = craft.versions.showInternal %}
 
     {% set entries = craft.versions.getAllDrafts(site, preferSite) %}
@@ -61,9 +58,10 @@
             <thead>
             <tr>
                 <th scope="col">{{ "Title"|t('versions') }}</th>
+                <th scope="col">{{ "Name"|t('versions') }}</th>
                 <th scope="col">{{ "Slug"|t('versions') }}</th>
                 <th scope="col">{{ "Section"|t('versions') }}</th>
-                <th scope="col">{{ "ID"|t('versions') }}</th>
+                <th scope="col">{{ "Saved?"|t('versions') }}</th>
                 <th scope="col">{{ "Date created"|t('versions') }}</th>
                 <th scope="col">{{ "Date updated"|t('versions') }}</th>
                 {% if showInternal %}
@@ -75,27 +73,24 @@
 
             <tbody>
 
-            {% for entry in entries
-                if status == 'all'
+            {% for entry in entries if entry.isEditable
+                and (status == 'all'
                 or (status == 'unsaved' and entry.isUnsavedDraft == true)
-                or (status == 'saved' and entry.isUnsavedDraft == false) %}
+                or (status == 'saved' and entry.isUnsavedDraft == false)) %}
+
 
                 {% set section = entry.section.handle %}
                 {% set site = entry.site.handle %}
 
                 <tr data-id="{{ entry.id }}" data-name="{{ entry.title }}">
 
-                    <th data-title="Title">
-                        {% set url =
-                            currentUser.can("editsite:#{entry.site.uid}") ?
-                            cpUrl("entries/#{section}/#{entry.sourceId}", {site:site,draftId:entry.draftId,fresh:entry.isUnsavedDraft})  : ''%}
-                        {% if url %}
-                        <a class="go"
-                           href="{{ url }}">{{ entry.title?:'[untitled]' }}</a>
-                        {% else %}
-                            {{ entry.title }}
-                        {% endif %}
-                    </th>
+                    <td data-title="Title">
+                        <a class="go" href="{{ cpUrl("entries/#{section}/#{entry.sourceId}", {site:site,draftId:entry.draftId,fresh:entry.isUnsavedDraft}) }}">{{ entry.title?:'[untitled]' }}</a>
+                    </td>
+
+                    <td>
+                        {{ entry.isDraft ? entry.draftName }}
+                    </td>
 
                     <td data-title="slug">
                         {{ entry.slug }}
@@ -124,6 +119,7 @@
                     {% endif %}
 
                 </tr>
+
             {% endfor %}
 
             </tbody>
