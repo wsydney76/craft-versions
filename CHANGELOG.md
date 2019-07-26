@@ -1,5 +1,12 @@
 # Release Notes for Versions
 
+## 1.1.8 2019-07-26
+
+### Changed
+
+* Additional plugin settings for saving source entries and for saving from HUDs
+* Better permission detection, yet not finished. See README.md
+
 ## 1.1.7 2019-07-25
 
 ### Added 

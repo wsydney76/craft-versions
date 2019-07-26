@@ -77,12 +77,10 @@ class Versions extends Plugin
             Cp::class,
             Cp::EVENT_REGISTER_CP_NAV_ITEMS, function(RegisterCpNavItemsEvent $event) {
             if (Craft::$app->user->identity->can('accessPlugin-versions')) {
-                $count = $this->versions->getDraftsCount();
                 $nav = [
                     'url' => 'versions/drafts',
                     'label' => Craft::t('versions', 'Drafts'),
-                    'icon' => '@app/icons/field.svg',
-                    'badgeCount' => $count
+                    'icon' => '@app/icons/field.svg'
                 ];
                 foreach ($event->navItems as $i => $navItem) {
                     if ($navItem['url'] == 'entries') {
@@ -96,16 +94,7 @@ class Versions extends Plugin
         // Register Edit Screen extensions
         Craft::$app->view->hook('cp.entries.edit.details', function(&$context) {
             if ($context['entry'] != null) {
-                $entry = $context['entry'];
-                $drafts = [];
-                if ($entry->id && !$entry->isDraft) {
-                    $drafts = Entry::find()->draftOf($entry->id)->anyStatus()->siteId($entry->siteId)->all();
-                }
-                return Craft::$app->view->renderTemplate('versions/hook_versions.twig',
-                    [
-                        'entry' => $entry,
-                        'drafts' => $drafts
-                    ]);
+                return Craft::$app->view->renderTemplate('versions/hook_versions.twig', ['entry' => $context['entry']]);
             }
         });
 
@@ -118,7 +107,7 @@ class Versions extends Plugin
         Event::on(
             Entry::class,
             Entry::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) {
-            if (Craft::$app->request->isCpRequest) {
+            if (Craft::$app->request->isCpRequest || Craft::$app->request->isConsoleRequest) {
                 $event->behaviors[] = EntryBehavior::class;
             }
         });
@@ -154,5 +143,4 @@ class Versions extends Plugin
             'settings' => $this->getSettings()
         ]);
     }
-
 }
