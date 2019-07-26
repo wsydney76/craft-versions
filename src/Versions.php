@@ -77,12 +77,10 @@ class Versions extends Plugin
             Cp::class,
             Cp::EVENT_REGISTER_CP_NAV_ITEMS, function(RegisterCpNavItemsEvent $event) {
             if (Craft::$app->user->identity->can('accessPlugin-versions')) {
-                $count = $this->versions->getDraftsCount();
                 $nav = [
                     'url' => 'versions/drafts',
                     'label' => Craft::t('versions', 'Drafts'),
-                    'icon' => '@app/icons/field.svg',
-                    'badgeCount' => $count
+                    'icon' => '@app/icons/field.svg'
                 ];
                 foreach ($event->navItems as $i => $navItem) {
                     if ($navItem['url'] == 'entries') {

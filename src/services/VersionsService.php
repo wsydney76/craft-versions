@@ -5,6 +5,7 @@ namespace wsydney76\versions\services;
 use Craft;
 use craft\base\Component;
 use craft\elements\Entry;
+use craft\elements\User;
 use craft\records\Entry as EntryRecord;
 use wsydney76\versions\Versions;
 
@@ -37,7 +38,7 @@ class VersionsService extends Component
      * @param string $preferSite
      * @return array|\craft\base\ElementInterface[]|Entry[]
      */
-    public function getAllDrafts(string $site, string $preferSite)
+    public function getAllDrafts($site, string $preferSite)
     {
 
         return Entry::find()
@@ -46,19 +47,32 @@ class VersionsService extends Component
             ->preferSites([$preferSite])
             ->anyStatus()
             ->drafts(true)
-            ->andWhere(['not like','title','__temp'])
+            ->andWhere(['not like', 'title', '__temp'])
             ->orderBy('dateCreated desc')
             ->all();
     }
 
-    public function getDraftsCount() {
+    public function getDraftsCount()
+    {
         return Entry::find()
             ->site('*')
             ->unique()
             ->anyStatus()
             ->drafts(true)
-            ->andWhere(['not like','title','__temp'])
+            ->andWhere(['not like', 'title', '__temp'])
             ->count();
+    }
+
+    public function getAllowedSitesForUser(User $user)
+    {
+        $allowedSites = [];
+        $sites = Craft::$app->sites->getAllSites();
+        foreach ($sites as $site) {
+            if ($user->can("editsite:{$site->uid}")) {
+                $allowedSites[] = $site->handle;
+            }
+        }
+        return $allowedSites;
     }
 
 

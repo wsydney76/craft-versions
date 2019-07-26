@@ -15,7 +15,7 @@ class EntryBehavior extends Behavior
     public function getDrafts()
     {
         $entry = $this->owner;
-        if (ElementHelper::isDraftOrRevision($entry) || ! $entry->id) {
+        if (ElementHelper::isDraftOrRevision($entry) || !$entry->id) {
             return [];
         }
         return Entry::find()
@@ -56,15 +56,35 @@ class EntryBehavior extends Behavior
 
     public function canSave()
     {
-        $entry = $this->owner;
-        if ($entry->propagating || $entry->duplicateOf || $entry->resaving || ElementHelper::isDraftOrRevision($entry)) {
+
+        if (Craft::$app->request->isConsoleRequest) {
             return true;
         }
 
-        if (!Craft::$app->user->can('ignoreVersionsRestrictions')) {
-            $settings = Versions::$plugin->settings;
-            if (isset($settings['allowEditSourceIfDraftsExist']) && !$settings['allowEditSourceIfDraftsExist']) {
+        if (Craft::$app->user->can('ignoreVersionsRestrictions')) {
+            return true;
+        }
+        /** @var Entry $entry */
+        $entry = $this->owner;
+        $settings = Versions::$plugin->settings;
+
+        $p = Craft::$app->request->getParam('p');
+        if ($p == 'admin/actions/elements/save-element' && in_array($entry->section->handle, $settings['allowSaveHUD'])) {
+            return true;
+        }
+
+        if ((!$entry->id) || $entry->propagating || $entry->duplicateOf || $entry->resaving || ElementHelper::isDraftOrRevision($entry)) {
+            return true;
+        }
+
+        if (isset($settings['allowEditSource'])) {
+            if ($settings['allowEditSource'] == 'never') {
+                $entry->addError('title', 'Saving the current entry is not allowed. Use a draft for updating the entry.');
+                return false;
+            }
+            if ($settings['allowEditSource'] == 'nodrafts') {
                 if (count($this->getDrafts())) {
+                    $entry->addError('title', 'Saving the current entry is not allowed. Use existing draft for updating the entry.');
                     return false;
                 }
             }

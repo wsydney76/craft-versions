@@ -8,7 +8,8 @@ class SettingsModel extends Model
 {
     public $showInternal = 'never';
     public $allowPreviewForSourceEntries = 1;
-    public $allowEditSourceIfDraftsExist = 1;
     public $allowMultipleDrafts = 1;
+    public $allowEditSource = 'always';
+    public $allowSaveHUD = [];
 
 }

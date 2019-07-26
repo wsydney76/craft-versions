@@ -14,7 +14,11 @@
         <tr>
             <td>
                 {% set url = baseUrl ~ (version.isRevision ? '&revisionId=' ~ version.revisionId : '&draftId=' ~ version.draftId) %}
-                <a class="go" href="{{ url }}"><b>{{ version.title }}</b></a>
+                {% if version.isEditable %}
+                    <a class="go" href="{{ url }}"><b>{{ version.title }}</b></a>
+                    {% else %}
+                        {{ version.title }} <span class="status expired" title="{{ 'No permission to edit'|t('versions') }}"></span>
+                {% endif %}
             </td>
             <td>
                 {{ version.isRevision ? version.revisionLabel : version.draftName }}
