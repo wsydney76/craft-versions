@@ -62,6 +62,7 @@
                 <th scope="col">{{ "Slug"|t('versions') }}</th>
                 <th scope="col">{{ "Section"|t('versions') }}</th>
                 <th scope="col">{{ "Saved?"|t('versions') }}</th>
+                <th scope="col">{{ "Author"|t('versions') }}</th>
                 <th scope="col">{{ "Date created"|t('versions') }}</th>
                 <th scope="col">{{ "Date updated"|t('versions') }}</th>
                 {% if showInternal %}
@@ -102,6 +103,10 @@
 
                     <td data-title="Saved">
                         {{ entry.isUnsavedDraft ? 'Unsaved'|t('versions') : 'Saved'|t('versions') }}
+                    </td>
+                    
+                    <td data-title="Author">
+                        {{ entry.author.username }}
                     </td>
 
                     <td data-title="dateCreated">

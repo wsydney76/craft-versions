@@ -104,12 +104,8 @@ class EntryBehavior extends Behavior
         $uid = $entry->section->uid;
         $user = Craft::$app->user->identity;
 
-        if ($user->can("editentries:{$uid}")) {
-            return true;
-        }
-
         if ($entry->authorId == $user->id) {
-            if ($user->can("editpeerentries:{$uid}")) {
+            if ($user->can("editentries:{$uid}")) {
                 return true;
             }
         } else {
