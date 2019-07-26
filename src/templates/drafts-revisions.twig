@@ -17,6 +17,10 @@
 
 {% set title = "#{entry.section.name} #{entry.title}: #{'Drafts and Revisions'|t('versions')}" %}
 
+{% block actionButton %}
+    <a class="btn" href="{{ craft.app.request.referrer }}">{{ "Back"|t('versions') }}</a>
+{% endblock %}
+
 {% block sidebar %}
     {% set entries = entry.entriesForAllSites %}
 

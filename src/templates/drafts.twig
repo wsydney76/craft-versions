@@ -73,7 +73,7 @@
 
             <tbody>
 
-            {% for entry in entries if entry.isEditable
+            {% for entry in entries if entry.isDraftEditable
                 and (status == 'all'
                 or (status == 'unsaved' and entry.isUnsavedDraft == true)
                 or (status == 'saved' and entry.isUnsavedDraft == false)) %}

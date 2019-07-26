@@ -3,6 +3,7 @@
 return [
     '{count} Drafts exist' => '{count} Entwürfe vorhanden',
     'All' => 'Alle',
+    'Back' => 'Zurück',
     'By sites' => 'Nach Websites',
     'By status' => 'Nach Status',
     'Creator' => 'Ersteller',
