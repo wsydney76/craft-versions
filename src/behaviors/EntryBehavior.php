@@ -61,7 +61,7 @@ class EntryBehavior extends Behavior
             return true;
         }
 
-        if (Craft::$app->user->can('ignoreVersionsRestrictions')) {
+        if (Craft::$app->user->identity->can('ignoreVersionsRestrictions')) {
             return true;
         }
         /** @var Entry $entry */

@@ -1,5 +1,11 @@
 # Release Notes for Versions
 
+## 1.2 2019-07-29
+
+### Added
+
+* Added a context sensitve help window.
+
 ## 1.1.8 2019-07-26
 
 ### Changed
