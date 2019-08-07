@@ -46,8 +46,7 @@ class VersionsService extends Component
             ->unique()
             ->preferSites([$preferSite])
             ->anyStatus()
-            ->drafts(true)
-            ->andWhere(['not like', 'title', '__temp'])
+            ->drafts(1)
             ->orderBy('dateCreated desc')
             ->all();
     }

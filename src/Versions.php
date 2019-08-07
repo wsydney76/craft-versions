@@ -93,7 +93,7 @@ class Versions extends Plugin
 
         // Register Edit Screen extensions
         if (Craft::$app->user->identity && Craft::$app->user->identity->can('accessPlugin-versions')) {
-            Craft::$app->view->hook('cp.entries.edit.details', function(&$context) {
+            Craft::$app->view->hook('cp.entries.edit.meta', function(&$context) {
                 if ($context['entry'] != null) {
                     return Craft::$app->view->renderTemplate('versions/hook_versions.twig', ['entry' => $context['entry']]);
                 }

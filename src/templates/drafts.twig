@@ -76,7 +76,7 @@
             <tbody>
 
             {% for entry in entries if entry.isDraftEditable
-                and (craft.entries.id(entry.sourceId).anyStatus.ids)
+
                 and (status == 'all'
                 or (status == 'unsaved' and entry.isUnsavedDraft == true)
                 or (status == 'saved' and entry.isUnsavedDraft == false)) %}

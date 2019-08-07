@@ -1,7 +1,7 @@
 {% set isSource = not entry.isDraft and not entry.isRevision %}
 {% set drafts = entry.drafts %}
 
-<div class="meta">
+<div>
     {% if not isSource %}
         {% set infoHtml %}
             {% if not entry.isUnsavedDraft %}
@@ -55,7 +55,7 @@
 {% endif %}
 
 {% js %}
-    $('.flex-grow').html(`{{ headerHtml|raw }}`);
+    $('#header .flex-nowrap').append(`<div>{{ headerHtml|raw }}</div>`);
 {% endjs %}
 
 {% set baseUrl = cpUrl("versions/help", {id:entry.sourceId, site:entry.site.handle }) %}
