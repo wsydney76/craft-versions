@@ -1,5 +1,14 @@
 # Release Notes for Versions
 
+## 1.2.1 2019-08-07
+
+### Changed
+
+* Bumped Craft requirement to 3.2.9
+* Tweaks for 3.2.9, as header html changed
+
+This is just a working copy for 3.2.9, not a finished release.
+
 ## 1.2 2019-07-29
 
 ### Added
