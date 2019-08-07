@@ -11,5 +11,7 @@ class SettingsModel extends Model
     public $allowMultipleDrafts = 1;
     public $allowEditSource = 'always';
     public $allowSaveHUD = [];
+    public $helpCaption = 'Advanced help for workflow';
+    public $helpUrl = '';
 
 }
