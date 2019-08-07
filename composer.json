@@ -1,7 +1,7 @@
 {
   "name": "wsydney76/versions",
   "description": "Improves visibility of drafts and revisions",
-  "version": "1.1.8",
+  "version": "1.2.1",
   "type": "craft-plugin",
   "keywords": ["craftcms", "drafts", "revisions"],
   "license": "MIT",
@@ -18,7 +18,7 @@
     "docs": "https://github.com/wsydney76/versions/blob/master/README.md"
   },
   "require": {
-    "craftcms/cms": "^3.2.5"
+    "craftcms/cms": "^3.2.9"
   },
   "autoload": {
     "psr-4": {

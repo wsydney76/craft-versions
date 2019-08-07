@@ -1,9 +1,9 @@
 {% set isSource = not entry.isDraft and not entry.isRevision %}
 {% set drafts = entry.drafts %}
 
-<div class="meta">
+<div>
     {% if not isSource %}
-        {% set headerHtml %}
+        {% set infoHtml %}
             {% if not entry.isUnsavedDraft %}
                 {% set test = craft.entries.site('*').anyStatus().id(entry.sourceId).one %}
                 {% if not test %}
@@ -23,7 +23,7 @@
         {% endfor %}
          #}
         {% if drafts %}
-            {% set headerHtml %}
+            {% set infoHtml %}
                 {% if drafts|length <= 2 %}
                     {% for draft in drafts %}
                         <a class="btn submit versions-button" style="margin-bottom: 0px"
@@ -42,21 +42,62 @@
         <a class="btn versions-button"
            href="{{ cpUrl('versions/drafts-revisions',{id:entry.sourceId, site:entry.site.handle}) }}">{{ "Drafts and Revisions"|t('versions') }}</a>
     {% endif %}
+
 </div>
 
-{% if headerHtml is defined %}
-    {% js %}
-        $('.flex-grow').html(`<span class="versions-danger">{{ headerHtml|raw }}</span>`);
-    {% endjs %}
+{% set headerHtml %}
+    <a class="btn" id="versionshelp-btn">?</a>
+{% endset %}
+
+
+{% if infoHtml is defined %}
+    {% set headerHtml = "<span id='versions-info' class='versions-danger'>#{infoHtml}</span>#{headerHtml}" %}
 {% endif %}
+
+{% js %}
+    $('#header .flex-nowrap').append(`<div>{{ headerHtml|raw }}</div>`);
+{% endjs %}
+
+{% set baseUrl = cpUrl("versions/help", {id:entry.sourceId, site:entry.site.handle }) %}
 
 {% js %}
     if (window.draftEditor) {
     window.draftEditor.on('createDraft', function() {
-    $('.flex-grow').html('');
+    $('#versions-info').html('');
     $('#preview-btn').css('display','block');
+    draftId = window.draftEditor.settings.draftId;
+    helpurl = baseUrl + '&draftId=' + draftId
     });
     }
+{% endjs %}
+
+
+{% js at POS_END %}
+
+    baseUrl = '{{ baseUrl|raw }}';
+    {% set draftId = craft.app.request.param('draftId') %}
+
+    {% if draftId %}
+        helpurl = baseUrl + '&draftId=' + {{ draftId }};
+    {% else %}
+        helpurl = baseUrl;
+    {% endif %}
+    {% set revisionId = craft.app.request.param('revisionId') %}
+    {% if revisionId %}
+        helpurl = baseUrl + '&revisionId=' + {{ revisionId }};
+    {% endif %}
+
+
+
+    $('#versionshelp-btn').on('click',function(){
+    $.get(helpurl)
+    .done(function(data) {
+    hud = new Garnish.Modal(  data  , {resizable: true, draggable:true} );
+    })
+    .fail(function() {
+    alert("error");
+    });
+    });
 {% endjs %}
 
 {% css %}
@@ -67,6 +108,9 @@
     color:red;
     font-weight:bold;
     margin-bottom:12px;
+    }
+    #versionshelp-btn {
+    margin-left:6px;
     }
 {% endcss %}
 

@@ -1,0 +1,20 @@
+{# @var version \craft\models\EntryVersion #}
+<div class="modal elementselectormodal">
+    <div class="body">
+        <div class="content">
+            <div class="main">
+                <div class="elements">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="footer">
+        <div class="spinner hidden"></div>
+        <div class="buttons right">
+            {% block buttons %}{% endblock %}
+            <div class="btn" tabindex="0" onclick="Garnish.Modal.visibleModal.hide()">Close</div>
+        </div>
+    </div>
+</div>

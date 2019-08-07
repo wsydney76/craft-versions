@@ -92,11 +92,13 @@ class Versions extends Plugin
         });
 
         // Register Edit Screen extensions
-        Craft::$app->view->hook('cp.entries.edit.details', function(&$context) {
-            if ($context['entry'] != null) {
-                return Craft::$app->view->renderTemplate('versions/hook_versions.twig', ['entry' => $context['entry']]);
-            }
-        });
+        if (Craft::$app->user->identity && Craft::$app->user->identity->can('accessPlugin-versions')) {
+            Craft::$app->view->hook('cp.entries.edit.meta', function(&$context) {
+                if ($context['entry'] != null) {
+                    return Craft::$app->view->renderTemplate('versions/hook_versions.twig', ['entry' => $context['entry']]);
+                }
+            });
+        }
 
         // Register Service as Craft Variable
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $e) {

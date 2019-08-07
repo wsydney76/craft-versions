@@ -55,4 +55,16 @@
     values: settings.allowSaveHUD
 }) }}
 
+{{ forms.textField({
+    label: 'Caption for Help Url',
+    name: 'helpCaption',
+    instructions: 'This caption will be shown on a help button for the url below',
+    value: settings.helpCaption
+}) }}
 
+{{ forms.textField({
+    label: 'Help Url',
+    name: 'helpUrl',
+    instructions: 'A link to further help, has to work in cp, so start with /' ~ craft.app.config.general.cpTrigger,
+    value: settings.helpUrl
+}) }}

@@ -1,0 +1,156 @@
+{% extends "versions/modal.twig" %}
+
+{% set request = craft.app.request %}
+
+{% set id = request.param('id') %}
+{% set site = request.param('site') %}
+{% set draftId = request.param('draftId') %}
+{% set revisionId = request.param('revisionid') %}
+
+{% set info = craft.versions.getHelpInfo(id, site, draftId, revisionId) %}
+{% set entry = info['entry'] %}
+{% set entryIs = info['is'] %}
+{% set drafts = info['drafts'] %}
+{% set settings = info['settings'] %}
+
+{% block content %}
+
+    <h1>Provisional Workflow Help for {{ info['entry'].title }}</h1>
+
+    <p>TODO: Raw wording and layout at the moment. Permissions are not completely checked out, so maybe some wrong
+        advices.</p>
+
+    {% if currentUser.can('ignoreVersionsRestrictions') %}
+        <hr>
+        <h2 style="color:red">Warning</h2>
+        You have permission to ignore any restrictions described below. Be careful, as it is easy
+        to create conflicting drafts, or edited content may get lost without notice.
+        <hr>
+    {% endif %}
+
+
+    {% if entryIs == 'source' %}
+        <p>
+            You are editing the source entry. Status is: {{ entry.status }}
+        </p>
+
+        <h2>Action: Save Entry</h2>
+        <p>
+            {% if entry.isEditable %}
+                {% switch settings['allowEditSource'] %}
+                {% case "always" %}
+                    You can save your changes.
+                    {% if drafts|length %}
+                        Be carefull: Drafts exists. Your changes might be lost when the entry is updated with a draft.
+                    {% endif %}
+                {% case "never" %}
+                    You cannot save your changes directly.
+                    {% if drafts|length %}
+                        Select a draft to continue editing.
+                    {% else %}
+                        Create a draft first.
+                    {% endif %}
+
+                {% case 'nodrafts' %}
+                    {% if drafts|length %}
+                        You cannot save your changes directly because {{ drafts|length == 1 ? 'a draft' : 'drafts' }} exist.
+                        Select the draft to continue editing.
+                    {% else %}
+                        You can save your changes.
+                    {% endif %}
+                {% endswitch %}
+            {% else %}
+                You have no permission to edit this entry.
+                {% if entry.author.id != currentUser.id %}
+                    You are not the author.
+                {% endif %}
+            {% endif %}
+        </p>
+        <h2>Action: Preview</h2>
+        <p>
+            {% if settings['allowPreviewForSourceEntries'] %}
+                Click Preview to create a new draft for previewing.
+                {% if not settings['allowMultipleDrafts'] %}
+                    {% if drafts|length %}
+                        Draft(s) already exist. Consider changing to an existing draft.
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                Preview is not allowed, because it would silentyly create a new draft.
+                Create a new draft first (if allowed), if you really want to change something,
+                or use 'Share' to see a frontend view.
+                {% if drafts %}
+                    Or change to an existing one.
+                {% endif %}
+            {% endif %}
+        </p>
+        <h2>Action: Save draft</h2>
+        <p>
+            {% if drafts and not settings['allowMultipleDrafts'] %}
+                Draft(s) already exist. So it is not allowed to create a new, conflicting one.
+            {% else %}
+                You can create a new draft.
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {% if entryIs == 'draft' %}
+        <p>
+            You are editing a draft.
+        </p>
+
+        {% if not entry.isUnsavedDraft and  info['sourceEntry'].dateUpdated > entry.versionCreated %}
+            <h2 style="color:red">Warning: Draft possibly outdated</h2>
+            <p>
+                The source entry was updated after this draft was created. So updating the entry with this draft
+                will overwrite those changes. Be carefull. (Sorry, we can't do a compare yet...)
+            </p>
+        {% endif %}
+
+        <h2>Autosaving</h2>
+        <p>
+            When editing a draft, autosaving is active. [Short description here...]
+        </p>
+
+        {% if entry.isUnsavedDraft %}
+            <h2>Action: Save Entry</h2>
+            <p>
+                This draft will be saved as a new entry, if all validations pass.
+            </p>
+        {% else %}
+            <h2>Action: Update Entry</h2>
+            {% if entry.isEditable %}
+                <p>
+                    The entry will be updated with this draft, if all validations pass.
+                    {% if drafts|length > 1 %}
+                        Other drafts exists. Check!
+                    {% endif %}
+                </p>
+            {% else %}
+                <p>
+                    You have not permission to update this entry.
+                    {% if entry.author.id != currentUser.id %}
+                        You are not the author.
+                    {% endif %}
+                </p>
+            {% endif %}
+        {% endif %}
+
+    {% endif %}
+
+    {% if entry.hasErrors %}
+        <h2 style="color:red">There will be errors</h2>
+        <ul>
+            {% for key,msg in entry.firstErrors %}
+                <li>{{ key }}: {{ msg }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+{% endblock %}
+
+{% block buttons %}
+    {% if settings['helpUrl'] %}
+        <a class="btn submit" href="{{ settings['helpUrl'] }}" target="_blank">{{ settings['helpCaption'] }}</a>
+    {% endif %}
+{% endblock %}
