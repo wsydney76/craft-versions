@@ -26,7 +26,7 @@
             {% set infoHtml %}
                 {% if drafts|length <= 2 %}
                     {% for draft in drafts %}
-                        <a class="btn submit versions-button" style="margin-bottom: 0px"
+                        <a class="btn submit versions-button"
                            href="{{ draft.cpEditUrl }}&draftId={{ draft.draftId }}">
                             {{ "Edit #{draft.draftName}" }}
                         </a>
@@ -37,13 +37,17 @@
             {% endset %}
         {% endif %}
     {% endif %}
-
-    {% if entry.id and not entry.isUnsavedDraft %}
-        <a class="btn versions-button"
-           href="{{ cpUrl('versions/drafts-revisions',{id:entry.sourceId, site:entry.site.handle}) }}">{{ "Drafts and Revisions"|t('versions') }}</a>
-    {% endif %}
-
 </div>
+
+{% if entry.id and not entry.isUnsavedDraft %}
+    <div class="data">
+        <div class="value">
+            <a href="{{ cpUrl('versions/drafts-revisions',{id:entry.sourceId, site:entry.site.handle}) }}">{{ "Drafts and Revisions"|t('versions') }}</a>
+        </div>
+    </div>
+{% endif %}
+
+
 
 {% set headerHtml %}
     <a class="btn" id="versionshelp-btn">?</a>
@@ -55,7 +59,8 @@
 {% endif %}
 
 {% js %}
-    $('#header .flex-nowrap').append(`<div>{{ headerHtml|raw }}</div>`);
+    $('#header .flex-nowrap').append(`
+    <div>{{ headerHtml|raw }}</div>`);
 {% endjs %}
 
 {% set baseUrl = cpUrl("versions/help", {id:entry.sourceId, site:entry.site.handle }) %}
@@ -101,21 +106,16 @@
 {% endjs %}
 
 {% css %}
-    .versions-button {
-    margin-bottom:6px;
-    }
-    .versions-danger {
-    color:red;
-    font-weight:bold;
-    margin-bottom:12px;
-    }
-    #versionshelp-btn {
-    margin-left:6px;
-    }
+.versions-danger {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
 {% endcss %}
 
-{% if not currentUser.can('ignoreVersionsRestrictions') %}
-    {% set settings = craft.app.plugins.plugin('versions').settings %}
+{% set settings = craft.app.plugins.plugin('versions').settings %}
+{% if not settings['enablePermissions']  or (not currentUser.can('ignoreVersionsRestrictions')) %}
+
     {% if isSource and not settings['allowPreviewForSourceEntries'] %}
         {% css %}
             #preview-btn {display:none}
