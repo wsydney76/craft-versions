@@ -1,5 +1,16 @@
 # Release Notes for Versions
 
+## 1.2.2 2019-08-09
+
+### Added
+
+* Setting 'Enable Permissions to ignore restrictions' so that restrictions can also be applied to admins,
+for easier testing.
+
+### Changed
+
+* Better CP styling
+
 ## 1.2.1 2019-08-07
 
 ### Changed

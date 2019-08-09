@@ -20,7 +20,7 @@
     <p>TODO: Raw wording and layout at the moment. Permissions are not completely checked out, so maybe some wrong
         advices.</p>
 
-    {% if currentUser.can('ignoreVersionsRestrictions') %}
+    {% if settings['enablePermissions'] and currentUser.can('ignoreVersionsRestrictions') %}
         <hr>
         <h2 style="color:red">Warning</h2>
         You have permission to ignore any restrictions described below. Be careful, as it is easy

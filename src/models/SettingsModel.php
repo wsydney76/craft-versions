@@ -13,5 +13,6 @@ class SettingsModel extends Model
     public $allowSaveHUD = [];
     public $helpCaption = 'Advanced help for workflow';
     public $helpUrl = '';
+    public $enablePermissions = 1;
 
 }

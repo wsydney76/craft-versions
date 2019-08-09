@@ -68,3 +68,10 @@
     instructions: 'A link to further help, has to work in cp, so start with /' ~ craft.app.config.general.cpTrigger,
     value: settings.helpUrl
 }) }}
+
+{{ forms.lightswitchField({
+    label: 'Enable Permissions to ignore restrictions'|t('versions'),
+    name: 'enablePermissions',
+    instructions: 'If enabled, admins and user with the "Ignore Workflow Restrictions" permission will not be restricted in their possible actions.'|t('versions'),
+    on: settings.enablePermissions
+}) }}

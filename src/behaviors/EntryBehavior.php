@@ -61,12 +61,14 @@ class EntryBehavior extends Behavior
             return true;
         }
 
-        if (Craft::$app->user->identity->can('ignoreVersionsRestrictions')) {
+        $settings = Versions::$plugin->settings;
+
+        if ($settings['enablePermissions'] && Craft::$app->user->identity->can('ignoreVersionsRestrictions')) {
             return true;
         }
         /** @var Entry $entry */
         $entry = $this->owner;
-        $settings = Versions::$plugin->settings;
+
 
         $p = Craft::$app->request->getParam('p');
         if ($p == 'admin/actions/elements/save-element' && in_array($entry->section->handle, $settings['allowSaveHUD'])) {
