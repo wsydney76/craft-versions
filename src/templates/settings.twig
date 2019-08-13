@@ -43,6 +43,15 @@
     on: settings.allowMultipleDrafts
 }) }}
 
+
+{{ forms.lightswitchField({
+    label: 'Allow saving drafts from all sites'|t('versions'),
+    name: 'enableDraftSaveFromAllSites',
+    instructions: 'If enabled, it will be possible to save drafts from all sites.
+This should be disabled if dynamic values as image folders are build from site specific values like a slug.'|t('versions'),
+    on: settings.enableDraftSaveFromAllSites
+}) }}
+
 {% set options = craft.app.sections.allSections
     |filter(s => s.type in ['channel','structure'])
     |map(s => {label:s.name, value:s.handle}) %}

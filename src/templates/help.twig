@@ -126,6 +126,13 @@
                         Other drafts exists. Check!
                     {% endif %}
                 </p>
+                {% if entry.site.id != craft.app.sites.primarySite.id and not settings['enableDraftSaveFromAllSites'] %}
+                    <p>
+                        <b>You have to switch to the primary site to save the draft.</b></p>
+                    <p>This ensures for example that image folder names
+                        and built from the correct language specific values.
+                    </p>
+                {% endif %}
             {% else %}
                 <p>
                     You have not permission to update this entry.

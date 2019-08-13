@@ -134,6 +134,8 @@
 
             </tbody>
         </table>
+    {% else %}
+        {{ 'Nothing found'|t('versions') }}
     {% endif %}
 
 {% endblock %}

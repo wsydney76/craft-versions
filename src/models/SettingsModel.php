@@ -14,5 +14,6 @@ class SettingsModel extends Model
     public $helpCaption = 'Advanced help for workflow';
     public $helpUrl = '';
     public $enablePermissions = 1;
+    public $enableDraftSaveFromAllSites = 1;
 
 }
