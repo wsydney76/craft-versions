@@ -28,6 +28,14 @@
 
 
 {{ forms.lightswitchField({
+    label: 'Allow saving from all sites'|t('versions'),
+    name: 'enableSaveFromAllSites',
+    instructions: 'If enabled, it will be possible to update entries from all sites.
+This should be disabled if dynamic values as image folders are built from site specific values like a slug.'|t('versions'),
+    on: settings.enableSaveFromAllSites
+}) }}
+
+{{ forms.lightswitchField({
     label: 'Enable preview for source entries'|t('versions'),
     name: 'allowPreviewForSourceEntries',
     instructions: 'If enabled, the preview button will not be shown for source entries, therefor the user has to create a draft manually'|t('versions'),
@@ -44,13 +52,6 @@
 }) }}
 
 
-{{ forms.lightswitchField({
-    label: 'Allow saving drafts from all sites'|t('versions'),
-    name: 'enableDraftSaveFromAllSites',
-    instructions: 'If enabled, it will be possible to save drafts from all sites.
-This should be disabled if dynamic values as image folders are build from site specific values like a slug.'|t('versions'),
-    on: settings.enableDraftSaveFromAllSites
-}) }}
 
 {% set options = craft.app.sections.allSections
     |filter(s => s.type in ['channel','structure'])
