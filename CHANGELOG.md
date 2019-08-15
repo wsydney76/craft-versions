@@ -1,5 +1,13 @@
 # Release Notes for Versions
 
+## 1.2.3 2019-08-15
+
+### Added 
+
+* Setting 'Allow saving from all sites' to avoid getting generated asset folder names
+from wrong site.
+
+
 ## 1.2.2 2019-08-09
 
 ### Added
