@@ -136,4 +136,20 @@
             {% endcss %}
         {% endif %}
     {% endif %}
+
+    {% if entry.site.id != craft.app.sites.primarySite.id and not settings['enableSaveFromAllSites']  %}
+        {% if entry.isDraft %}
+            {% css %}
+                #header .flex  .btn.submit {
+                display:none;
+                }
+            {% endcss %}
+        {% else %}
+            {% css %}
+                #save-btn-container {display:none}
+            {% endcss %}
+        {% endif %}
+    {% endif %}
+
+
 {% endif %}

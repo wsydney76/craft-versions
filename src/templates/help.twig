@@ -43,6 +43,15 @@
                     {% if drafts|length %}
                         Be carefull: Drafts exists. Your changes might be lost when the entry is updated with a draft.
                     {% endif %}
+
+                    {% if entry.site.id != craft.app.sites.primarySite.id and not settings['enableSaveFromAllSites'] %}
+                        <p>
+                            <b>You have to switch to the primary site to save the draft.</b></p>
+                        <p>This ensures for example that image folder names
+                            are built from the correct language specific values.
+                        </p>
+                    {% endif %}
+
                 {% case "never" %}
                     You cannot save your changes directly.
                     {% if drafts|length %}
@@ -126,9 +135,16 @@
                         Other drafts exists. Check!
                     {% endif %}
                 </p>
+                {% if entry.site.id != craft.app.sites.primarySite.id and not settings['enableSaveFromAllSites'] %}
+                    <p>
+                        <b>You have to switch to the primary site to save the draft.</b></p>
+                    <p>This ensures for example that image folder names
+                        are built from the correct language specific values.
+                    </p>
+                {% endif %}
             {% else %}
                 <p>
-                    You have not permission to update this entry.
+                    You have no permission to update this entry.
                     {% if entry.author.id != currentUser.id %}
                         You are not the author.
                     {% endif %}
