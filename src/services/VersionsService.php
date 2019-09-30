@@ -41,7 +41,7 @@ class VersionsService extends Component
     public function getAllDrafts($site, string $preferSite)
     {
 
-        return Entry::find()
+        $drafts = Entry::find()
             ->site($site)
             ->unique()
             ->preferSites([$preferSite])
@@ -49,6 +49,10 @@ class VersionsService extends Component
             ->drafts(1)
             ->orderBy('dateCreated desc')
             ->all();
+        foreach ($drafts as $draft) {
+            $draft->scenario = Entry::SCENARIO_LIVE;
+        }
+        return $drafts;
     }
 
     public function getDraftsCount()
