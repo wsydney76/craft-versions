@@ -61,6 +61,11 @@ class EntryBehavior extends Behavior
             return true;
         }
 
+        // This should apply if a section/entrytype is edited in the CP
+        if (strpos(Craft::$app->request->url,'settings/sections')) {
+            return true;
+        }
+
         $settings = Versions::$plugin->settings;
 
         if ($settings['enablePermissions'] && Craft::$app->user->identity->can('ignoreVersionsRestrictions')) {
@@ -68,7 +73,6 @@ class EntryBehavior extends Behavior
         }
         /** @var Entry $entry */
         $entry = $this->owner;
-
 
         $p = Craft::$app->request->getParam('p');
         if ($p == 'admin/actions/elements/save-element' && in_array($entry->section->handle, $settings['allowSaveHUD'])) {
@@ -80,6 +84,7 @@ class EntryBehavior extends Behavior
         }
 
         if (isset($settings['allowEditSource'])) {
+
             if ($settings['allowEditSource'] == 'never') {
                 $entry->addError('title', 'Saving the current entry is not allowed. Use a draft for updating the entry.');
                 return false;
