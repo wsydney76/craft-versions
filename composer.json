@@ -1,7 +1,7 @@
 {
   "name": "wsydney76/versions",
   "description": "Improves visibility of drafts and revisions",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "type": "craft-plugin",
   "keywords": ["craftcms", "drafts", "revisions"],
   "license": "MIT",

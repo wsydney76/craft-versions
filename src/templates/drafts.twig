@@ -66,6 +66,7 @@
                 <th scope="col">{{ "Author"|t('versions') }}</th>
                 <th scope="col">{{ "Date created"|t('versions') }}</th>
                 <th scope="col">{{ "Date updated"|t('versions') }}</th>
+                <th>{{ 'Valid'|t }}</th>
                 {% if showInternal %}
                     <th scope="col">{{ "Internal"|t('versions') }}</th>
                 {% endif %}
@@ -119,6 +120,9 @@
                     </td>
                     <td data-title="dateUpdated">
                         {{ entry.dateUpdated|datetime('Y-m-d G:i') }}
+                    </td>
+                    <td>
+                        {{ not entry.validate ? "Errors" }}
                     </td>
                     {% if showInternal %}
                         <td data-title="internal">

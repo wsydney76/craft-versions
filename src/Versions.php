@@ -57,6 +57,13 @@ class Versions extends Plugin
 
         self::$plugin = $this;
 
+        // Set the controllerNamespace based on whether this is a console or web request
+        if (Craft::$app->getRequest()->getIsConsoleRequest()) {
+            $this->controllerNamespace = 'wsydney76\\versions\\console\\controllers';
+        } else {
+            $this->controllerNamespace = 'wsydney76\\versions\\controllers';
+        }
+
         // Create Permissions
         Event::on(
             UserPermissions::class,
@@ -109,15 +116,16 @@ class Versions extends Plugin
         Event::on(
             Entry::class,
             Entry::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) {
-            if (Craft::$app->request->isCpRequest || Craft::$app->request->isConsoleRequest) {
+            //if (Craft::$app->request->isCpRequest || Craft::$app->request->isConsoleRequest) {
                 $event->behaviors[] = EntryBehavior::class;
-            }
+            //}
         });
 
         // Save
         Event::on(
             Entry::class,
             Entry::EVENT_BEFORE_SAVE, function(ModelEvent $event) {
+
             $event->isValid = $event->sender->canSave();
         }
         );
