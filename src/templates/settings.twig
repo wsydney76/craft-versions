@@ -1,5 +1,20 @@
 {% import "_includes/forms" as forms %}
 
+
+{{ forms.lightswitchField({
+    label: 'Show Element Source'|t('versions'),
+    name: 'showElementSource',
+    instructions: 'If enabled, an additional source will be available for the entries index'|t('versions'),
+    on: settings.showElementSource
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Show Navigation Entry'|t('versions'),
+    name: 'showNavigationEntry',
+    instructions: 'If enabled, an additional navigation entry will be availabe, poining to a special drafts page with more informations'|t('versions'),
+    on: settings.showNavigationEntry
+}) }}
+
 {{ forms.selectField({
     first: true,
     label: 'Show Internal Column'|t('versions'),

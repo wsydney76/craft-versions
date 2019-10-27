@@ -1,5 +1,12 @@
 # Release Notes for Versions
 
+## 1.3 2019-10-27
+
+### Added
+* Added 'All drafts' element source for entries index pages
+* Added settings for enabling/disabling drafts navigation entry
+* Added settings for enabling/disabling drafts element source
+
 ## 1.2.4 2019-10-07
 
 * Fixed a bug that occurred when saving the settings of a single section/entrytype
