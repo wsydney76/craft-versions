@@ -3,13 +3,18 @@
 namespace wsydney76\versions;
 
 use Craft;
+use craft\base\Element;
 use craft\base\Model;
 use craft\base\Plugin;
 use craft\elements\Entry;
+use craft\elements\User;
 use craft\events\DefineBehaviorsEvent;
 use craft\events\ModelEvent;
 use craft\events\RegisterCpNavItemsEvent;
+use craft\events\RegisterElementSourcesEvent;
+use craft\events\RegisterElementTableAttributesEvent;
 use craft\events\RegisterUserPermissionsEvent;
+use craft\events\SetElementTableAttributeHtmlEvent;
 use craft\services\UserPermissions;
 use craft\web\twig\variables\Cp;
 use craft\web\twig\variables\CraftVariable;
@@ -80,23 +85,25 @@ class Versions extends Plugin
         );
 
         // Set Nav
-        Event::on(
-            Cp::class,
-            Cp::EVENT_REGISTER_CP_NAV_ITEMS, function(RegisterCpNavItemsEvent $event) {
-            if (Craft::$app->user->identity->can('accessPlugin-versions')) {
-                $nav = [
-                    'url' => 'versions/drafts',
-                    'label' => Craft::t('versions', 'Drafts'),
-                    'icon' => '@app/icons/field.svg'
-                ];
-                foreach ($event->navItems as $i => $navItem) {
-                    if ($navItem['url'] == 'entries') {
-                        break;
+        if ($this->settings['showNavigationEntry']) {
+            Event::on(
+                Cp::class,
+                Cp::EVENT_REGISTER_CP_NAV_ITEMS, function(RegisterCpNavItemsEvent $event) {
+                if (Craft::$app->user->identity->can('accessPlugin-versions')) {
+                    $nav = [
+                        'url' => 'versions/drafts',
+                        'label' => Craft::t('versions', 'Drafts'),
+                        'icon' => '@app/icons/field.svg'
+                    ];
+                    foreach ($event->navItems as $i => $navItem) {
+                        if ($navItem['url'] == 'entries') {
+                            break;
+                        }
                     }
+                    array_splice($event->navItems, $i + 1, 0, [$nav]);
                 }
-                array_splice($event->navItems, $i + 1, 0, [$nav]);
-            }
-        });
+            });
+        }
 
         // Register Edit Screen extensions
         if (Craft::$app->user->identity && Craft::$app->user->identity->can('accessPlugin-versions')) {
@@ -117,7 +124,7 @@ class Versions extends Plugin
             Entry::class,
             Entry::EVENT_DEFINE_BEHAVIORS, function(DefineBehaviorsEvent $event) {
             //if (Craft::$app->request->isCpRequest || Craft::$app->request->isConsoleRequest) {
-                $event->behaviors[] = EntryBehavior::class;
+            $event->behaviors[] = EntryBehavior::class;
             //}
         });
 
@@ -130,6 +137,58 @@ class Versions extends Plugin
         }
         );
 
+        // Register Source for drafts
+        if ($this->settings['showElementSource']) {
+            Event::on(
+                Entry::class,
+                Element::EVENT_REGISTER_SOURCES, function(RegisterElementSourcesEvent $event) {
+                $event->sources[] = [
+                    'key' => 'drafts',
+                    'label' => Craft::t('app', 'All drafts'),
+                    'criteria' => [
+                        'drafts' => true,
+                        'editable' => true
+
+                    ],
+                    'defaultSort' => [
+                        0 => 'dateCreated',
+                        1 => 'desc'
+                    ]
+                ];
+            }
+            );
+            Event::on(
+                Entry::class,
+                Element::EVENT_REGISTER_TABLE_ATTRIBUTES, function(RegisterElementTableAttributesEvent $event) {
+                $event->tableAttributes['isUnsavedDraft'] = ['label' => Craft::t('versions', 'Unsaved?')];
+                $event->tableAttributes['draftName'] = ['label' => Craft::t('versions', 'Draft Name')];
+                $event->tableAttributes['draftNotes'] = ['label' => Craft::t('versions', 'Draft Notes')];
+                $event->tableAttributes['creatorId'] = ['label' => Craft::t('versions', 'Draft Creator')];
+            }
+            );
+            Event::on(
+                Entry::class,
+                Element::EVENT_SET_TABLE_ATTRIBUTE_HTML, function(SetElementTableAttributeHtmlEvent $event) {
+                // TODO: avoid error if draft fields are added to a non draft source
+
+                if ($event->attribute == 'isUnsavedDraft') {
+                    $event->handled = true;
+                    /** @var Entry $entry */
+                    $entry = $event->sender;
+                    $event->html = $entry->isUnsavedDraft ? '<span class="status active"></span>' : '';
+                }
+                if ($event->attribute == 'creatorId') {
+                    $event->handled = true;
+                    /** @var Entry $entry */
+                    $entry = $event->sender;
+                    /** @var User $user */
+                    $user = User::find()->id($entry->creatorId)->one();
+
+                    $event->html = $user ? $user->name : '';
+                }
+            }
+            );
+        }
         parent::init();
     }
 

@@ -1,7 +1,6 @@
 <?php
 
 return [
-    '{count} Drafts exist' => '{count} Entwürfe vorhanden',
     'All' => 'Alle',
     'Back' => 'Zurück',
     'By sites' => 'Nach Websites',
@@ -10,6 +9,9 @@ return [
     'Current' => 'Aktuell',
     'Date created' => 'Erstellungsdatum',
     'Date updated' => 'Änderungsdatum',
+    'Draft Creator' => 'Entwurfsersteller',
+    'Draft Notes' => 'Entwurfsanmerkungen',
+    'Draft Name' => 'Entwurfsname',
     'Draft possibly outdated' => 'Entwurf ist wahrscheinlich veraltet',
     'Drafts and Revisions' => 'Entwürfe und Revisionen',
     'Drafts' => 'Entwürfe',
@@ -24,5 +26,7 @@ return [
     'This entry is trashed' => 'Dieser Eintrag liegt im Papierkorb',
     'Title' => 'Titel',
     'Unsaved' => 'Ungespeichert',
+    'Unsaved?' => 'Ungespeichert?',
     'View' => 'Anschauen',
+    '{count} Drafts exist' => '{count} Entwürfe vorhanden',
 ];
