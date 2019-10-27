@@ -86,18 +86,22 @@ class VersionsService extends Component
         $info['drafts'] = $sourceEntry ? $sourceEntry->drafts : [];
         if ($draftId) {
             $info['entry'] = Entry::find()->draftId($draftId)->site($site)->anyStatus()->one();
+            $info['siteEntries'] = Entry::find()->draftId($draftId)->site('*')->anyStatus()->all();
             $info['is'] = 'draft';
         } elseif ($revisionId) {
             $info['entry'] = Entry::find()->revisionId($revisionId)->site($site)->anyStatus()->one();
+            $info['siteEntries'] = Entry::find()->revisionId($revisionId)->site('*')->anyStatus()->all();
             $info['is'] = 'revision';
         } else {
             $info['entry'] = $sourceEntry;
+            $info['siteEntries'] = Entry::find()->id($id)->site('*')->anyStatus()->all();
             $info['is'] = 'source';
         }
 
-        $info['entry']->scenario = Entry::SCENARIO_LIVE;
-        $info['entry']->validate();
-
+        foreach ($info['siteEntries'] as $siteEntry) {
+            $siteEntry->scenario = Entry::SCENARIO_LIVE;
+            $siteEntry->validate();
+        }
 
         $info['settings'] = Versions::$plugin->settings;
 

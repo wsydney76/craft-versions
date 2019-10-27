@@ -154,14 +154,18 @@
 
     {% endif %}
 
-    {% if entry.hasErrors %}
-        <h2 style="color:red">There will be errors</h2>
-        <ul>
-            {% for key,msg in entry.firstErrors %}
-                <li>{{ key }}: {{ msg }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    {% for siteEntry in info['siteEntries'] %}
+        {% if siteEntry.hasErrors %}
+            <h2 style="color:red">{{ siteEntry.site.name }}: there will be errors</h2>
+            <ul>
+                {% for key,msg in siteEntry.firstErrors %}
+                    <li>{{ key }}: {{ msg }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endfor %}
+
+
 
 {% endblock %}
 
