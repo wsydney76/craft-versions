@@ -1,5 +1,9 @@
 # Release Notes for Versions
 
+## 1.3.1 2019-10-27
+
+* Fixed a bug, where validations in help window were not performed for all sites.
+
 ## 1.3 2019-10-27
 
 ### Added
