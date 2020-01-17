@@ -15,7 +15,7 @@
     {label:"Entries", url:cpUrl('entries')}   ,
     {label:result.draft.section.name, url:cpUrl('entries/' ~ result.draft.section.handle)} ,
     {label:result.draft.title, url: cpUrl(result.draft.cpEditUrl, {draftId: draftId})},
-    {label:'Drafts and Revisions'|t, url:cpUrl('versions/drafts-revisions', {id: result.source.id, site: site, draftId: draftId })}
+    {label:'Drafts and Revisions'|t('versions'), url:cpUrl('versions/drafts-revisions', {id: result.source.id, site: site, draftId: draftId })}
 
 ] %}
 
@@ -29,7 +29,7 @@
             <ul>
                 <li class="heading"><span>{{ "By sites"|t('versions') }}</span></li>
                 {% for curEntry in entries
-                    if currentUser.can("editsite:#{curEntry.site.uid}")  %}
+                    if currentUser.can("editsite:#{curEntry.site.uid}") %}
                     <li>
                         <a class="{{ site == curEntry.site.handle ?'sel' }}"
                            href="{{ cpUrl('versions/compare',{draftId:draftId, site:curEntry.site.handle}) }}">
@@ -64,6 +64,9 @@
             {% set new %}
                 {{ relationOutput(attr.newValue) }}
             {% endset %}
+        {% elseif 'Date' in attr.fieldName or attr.fieldType == 'craft\\fields\\Date' %}
+            {% set old = attr.oldValue|datetime %}
+            {% set new = attr.newValue|datetime %}
         {% else %}
             {% set old = attr.oldValue %}
             {% set new = attr.newValue %}

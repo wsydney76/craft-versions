@@ -8,7 +8,9 @@ use craft\db\Query;
 use craft\elements\Entry;
 use craft\elements\User;
 use craft\helpers\DateTimeHelper;
+use craft\models\FieldLayoutTab;
 use craft\records\Entry as EntryRecord;
+use Exception;
 use wsydney76\versions\Versions;
 use function Arrayy\create;
 use function get_class;
@@ -135,6 +137,7 @@ class VersionsService extends Component
         $changedAttributes = $query
             ->from('{{%changedattributes}}')
             ->where(['elementId' => $draft->id, 'siteId' => $site->id])
+            ->orderBy('attribute desc')
             ->all();
 
         foreach ($changedAttributes as $changedAttribute) {
@@ -152,35 +155,44 @@ class VersionsService extends Component
             ];
         }
 
-        $query = new Query();
-        $changedFields = $query
-            ->from('{{%changedfields}}')
-            ->where(['elementId' => $draft->id, 'siteId' => $site->id])
-            ->all();
+        $tabs = $draft->fieldLayout->getTabs();
+        foreach ($tabs as $tab) {
+            /** @var FieldLayoutTab $tab */
+            $fields = $tab->getFields();
 
-        foreach ($changedFields as $changedField) {
-            $field = Craft::$app->fields->getFieldById($changedField['fieldId']);
-            $fieldHandle = $field->handle;
-            $isRelation = in_array(get_class($field), ['craft\fields\Assets', 'craft\fields\Entries']);
-            $isMatrix = get_class($field) == 'craft\fields\Matrix';
-            $data['changed'][] = [
-                'isAttribute' => false,
-                'isRelation' => $isRelation,
-                'isMatrix' => $isMatrix,
-                'fieldName' => $field->name,
-                'field' => $field,
-                'fieldType' => get_class($field),
-                'dateUpdated' => DateTimeHelper::toDateTime($changedField['dateUpdated']),
-                'propagated' => $changedField['propagated'],
-                'user' => $this->_getUserById($changedField['userId']),
-                'oldValue' => $isRelation ?
-                    $source->getFieldValue($fieldHandle)->all() :
-                    $source->getFieldValue($fieldHandle),
-                'newValue' => $isRelation ?
-                    $draft->getFieldValue($fieldHandle)->all() :
-                    $draft->getFieldValue($fieldHandle),
-            ];
+            foreach ($fields as $field) {
+                $query = new Query();
+                $changedField = $query
+                    ->from('{{%changedfields}}')
+                    ->where(['elementId' => $draft->id, 'siteId' => $site->id, 'fieldId' => $field->id])
+                    ->one();
+                if ($changedField) {
+                    $fieldHandle = $field->handle;
+                    $isRelation = in_array(get_class($field), ['craft\fields\Assets', 'craft\fields\Entries']);
+                    $isMatrix = get_class($field) == 'craft\fields\Matrix';
+                    $data['changed'][] = [
+                        'isAttribute' => false,
+                        'isRelation' => $isRelation,
+                        'isMatrix' => $isMatrix,
+                        'fieldName' => $field->name,
+                        'field' => $field,
+                        'fieldType' => get_class($field),
+                        'dateUpdated' => DateTimeHelper::toDateTime($changedField['dateUpdated']),
+                        'propagated' => $changedField['propagated'],
+                        'user' => $this->_getUserById($changedField['userId']),
+                        'oldValue' => $isRelation ?
+                            $source->getFieldValue($fieldHandle)->all() :
+                            $source->getFieldValue($fieldHandle),
+                        'newValue' => $isRelation ?
+                            $draft->getFieldValue($fieldHandle)->all() :
+                            $draft->getFieldValue($fieldHandle),
+                    ];
+                }
+            }
+
         }
+
+
 
         return $data;
     }
