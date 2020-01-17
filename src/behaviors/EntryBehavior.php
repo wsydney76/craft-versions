@@ -45,6 +45,8 @@ class EntryBehavior extends Behavior
             ->all();
     }
 
+
+
     public function getVersionCreated()
     {
         $entryRecord = EntryRecord::findOne($this->owner->id);

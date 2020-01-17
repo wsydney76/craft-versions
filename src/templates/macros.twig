@@ -1,7 +1,7 @@
 {% macro versionsTable(heading, versions, baseUrl,showInternal) %}
 
     <tr>
-        <td class="versions-heading" colspan="9">
+        <td class="versions-heading" colspan="10">
             {{ heading }}
         </td>
     </tr>
@@ -24,6 +24,11 @@
                 {{ version.isRevision ? version.revisionLabel : version.draftName }}
                 {% if version.isRevision and loop.index == 1 %}
                     ({{ "Current"|t('versions') }})
+                {% endif %}
+            </td>
+            <td>
+                {% if version.isDraft %}
+                <a class="go" href="{{ cpUrl("versions/compare",{draftId:version.draftId,site:version.site.handle}) }}">{{ 'Compare'|t }}</a>
                 {% endif %}
             </td>
             <td>

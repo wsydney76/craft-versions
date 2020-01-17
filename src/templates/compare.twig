@@ -1,0 +1,131 @@
+{% extends "_layouts/cp" %}
+
+{% do view.registerAssetBundle('craft\\web\\assets\\admintable\\AdminTableAsset') -%}
+{% from _self import relationOutput %}
+
+{% set draftId = craft.app.request.param('draftId') %}
+{% set site = craft.app.request.param('site') %}
+
+{% set result = craft.versions.compare(draftId, site) %}
+{% if not result %}
+    {% exit 404 %}
+{% endif %}
+
+{% set crumbs = [
+    {label:"Entries", url:cpUrl('entries')}   ,
+    {label:result.draft.section.name, url:cpUrl('entries/' ~ result.draft.section.handle)} ,
+    {label:result.draft.title, url: cpUrl(result.draft.cpEditUrl, {draftId: draftId})},
+    {label:'Drafts and Revisions'|t, url:cpUrl('versions/drafts-revisions', {id: result.source.id, site: site, draftId: draftId })}
+
+] %}
+
+{% set title = "Compare #{result.title}" %}
+
+{% block sidebar %}
+    {% set entries = craft.entries.draftId(draftId).site('*').anyStatus().all %}
+
+    {% if entries|length > 1 %}
+        <nav>
+            <ul>
+                <li class="heading"><span>{{ "By sites"|t('versions') }}</span></li>
+                {% for curEntry in entries
+                    if currentUser.can("editsite:#{curEntry.site.uid}")  %}
+                    <li>
+                        <a class="{{ site == curEntry.site.handle ?'sel' }}"
+                           href="{{ cpUrl('versions/compare',{draftId:draftId, site:curEntry.site.handle}) }}">
+                            <span class="label">{{ curEntry.site.name }}</span></a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    {% endif %}
+{% endblock %}
+
+
+
+{% block content %}
+    <div id="compare-table"></div>
+{% endblock %}
+
+{% set tableData = [] %}
+
+{% set id = 0 %}
+{% for attr in result.changed %}
+
+    {% set details %}
+        {% set old = '' %}
+        {% set new = '' %}
+        {% if attr.isMatrix %}
+            {% set old = 'Matrix Content differs' %}
+        {% elseif attr.isRelation %}
+            {% set old %}
+                {{ relationOutput(attr.oldValue) }}
+            {% endset %}
+            {% set new %}
+                {{ relationOutput(attr.newValue) }}
+            {% endset %}
+        {% else %}
+            {% set old = attr.oldValue %}
+            {% set new = attr.newValue %}
+        {% endif %}
+        <table class="data collapsible">
+            <thead>
+            <tr>
+                <th><b>Source</b></th>
+                <th><b>Draft</b></th>
+            </tr>
+            </thead>
+            <tr>
+                <td>{{ old }}</td>
+                <td>{{ new }}</td>
+            </tr>
+        </table>
+    {% endset %}
+
+    {% set id = id + 1 %}
+    {% set tableData = tableData|merge([{
+        id: id,
+        name: attr.fieldName|capitalize,
+        date: attr.dateUpdated|datetime,
+        user: attr.user ? attr.user.fullName : 'n/a',
+        type: attr.fieldType,
+        detail: {
+            handle:  '<span data-icon="downangle"></span>',
+            content: details
+        }
+    }]) %}
+
+
+
+{% endfor %}
+
+{% js %}
+
+    new Craft.VueAdminTable({
+    container: '#compare-table',
+    emptyMessage: 'Nothing found',
+    columns: [
+    {name: 'name', title: 'Attribute'},
+    {name: '__slot:detail', title: 'Compare'},
+    {name: 'date', title: 'Date'},
+    {name: 'user', title: 'User'},
+    {name: 'type', title: 'Field Type'},
+
+    ],
+    tableData: {{ tableData|json_encode|raw }},
+    });
+
+{% endjs %}
+
+{% macro relationOutput(elements) %}
+    <div style="display: flex">
+        {% for element in elements %}
+            <div>
+                {% if className(element) == 'craft\\elements\\Asset' and element.kind == 'image' %}
+                    <img style="margin-right:20px" src="{{ element.url({width:100, height:100}) }}"><br/>
+                {% endif %}
+                {{ element.title }}
+            </div>
+        {% endfor %}
+    </div>
+{% endmacro %}

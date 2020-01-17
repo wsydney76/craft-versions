@@ -4,10 +4,16 @@ namespace wsydney76\versions\services;
 
 use Craft;
 use craft\base\Component;
+use craft\db\Query;
 use craft\elements\Entry;
 use craft\elements\User;
+use craft\helpers\DateTimeHelper;
 use craft\records\Entry as EntryRecord;
 use wsydney76\versions\Versions;
+use function Arrayy\create;
+use function get_class;
+use function in_array;
+use function strpos;
 
 class VersionsService extends Component
 {
@@ -108,4 +114,89 @@ class VersionsService extends Component
         return $info;
     }
 
+    public function compare($draftId, $siteHandle)
+    {
+        $draft = Entry::find()->draftId($draftId)->site($siteHandle)->anyStatus()->one();
+        if (!$draft) {
+            return false;
+        }
+        $source = Entry::find()->id($draft->getSourceId())->site($siteHandle)->anyStatus()->one();
+
+        $site = Craft::$app->sites->getSiteByHandle($siteHandle);
+
+        $data = [
+            'title' => $draft->title,
+            'draft' => $draft,
+            'source' => $source,
+            'changed' => []
+        ];
+
+        $query = new Query();
+        $changedAttributes = $query
+            ->from('{{%changedattributes}}')
+            ->where(['elementId' => $draft->id, 'siteId' => $site->id])
+            ->all();
+
+        foreach ($changedAttributes as $changedAttribute) {
+            $data['changed'][] = [
+                'isAttribute' => true,
+                'isRelation' => false,
+                'isMatrix' => false,
+                'fieldName' => $changedAttribute['attribute'],
+                'fieldType' => 'attribute',
+                'dateUpdated' => DateTimeHelper::toDateTime($changedAttribute['dateUpdated']),
+                'propagated' => $changedAttribute['propagated'],
+                'user' => $this->_getUserById($changedAttribute['userId']),
+                'oldValue' => $source[$changedAttribute['attribute']],
+                'newValue' => $draft[$changedAttribute['attribute']],
+            ];
+        }
+
+        $query = new Query();
+        $changedFields = $query
+            ->from('{{%changedfields}}')
+            ->where(['elementId' => $draft->id, 'siteId' => $site->id])
+            ->all();
+
+        foreach ($changedFields as $changedField) {
+            $field = Craft::$app->fields->getFieldById($changedField['fieldId']);
+            $fieldHandle = $field->handle;
+            $isRelation = in_array(get_class($field), ['craft\fields\Assets', 'craft\fields\Entries']);
+            $isMatrix = get_class($field) == 'craft\fields\Matrix';
+            $data['changed'][] = [
+                'isAttribute' => false,
+                'isRelation' => $isRelation,
+                'isMatrix' => $isMatrix,
+                'fieldName' => $field->name,
+                'field' => $field,
+                'fieldType' => get_class($field),
+                'dateUpdated' => DateTimeHelper::toDateTime($changedField['dateUpdated']),
+                'propagated' => $changedField['propagated'],
+                'user' => $this->_getUserById($changedField['userId']),
+                'oldValue' => $isRelation ?
+                    $source->getFieldValue($fieldHandle)->all() :
+                    $source->getFieldValue($fieldHandle),
+                'newValue' => $isRelation ?
+                    $draft->getFieldValue($fieldHandle)->all() :
+                    $draft->getFieldValue($fieldHandle),
+            ];
+        }
+
+        return $data;
+    }
+
+    private function _getUserById($userId)
+    {
+        // https://www.yiiframework.com/doc/api/2.0/yii-caching-cacheinterface#getOrSet()-detail
+
+        $key = ['user', ['userId' => $userId]];
+        $cache = Craft::$app->cache;
+        // $cache->delete($key);
+
+        $user = $cache->getOrSet($key, function($cache) use ($userId) {
+            return User::find()->id($userId)->one();
+        });
+
+        return $user;
+    }
 }
