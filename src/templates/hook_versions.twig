@@ -44,7 +44,7 @@
         <div class="value">
             <a href="{{ cpUrl('versions/drafts-revisions',{id:entry.sourceId, site:entry.site.handle, draftId:entry.draftId}) }}">{{ "Drafts and Revisions"|t('versions') }}</a>
         </div>
-        {% if entry.isDraft %}
+        {% if craft.versions.canCompare and entry.isDraft %}
             <div class="value">
                 <a href="{{ cpUrl('versions/compare',{draftId:entry.draftId, site:entry.site.handle}) }}">{{ "Compare"|t('versions') }}</a>
             </div>

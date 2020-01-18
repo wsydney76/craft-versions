@@ -92,6 +92,7 @@
         date: attr.dateUpdated|datetime,
         user: attr.user ? attr.user.fullName : 'n/a',
         type: attr.fieldType,
+        propagated: attr.propagated ? 'Yes':'',
         detail: {
             handle:  '<span data-icon="downangle"></span>',
             content: details
@@ -113,7 +114,7 @@
     {name: 'date', title: 'Date'},
     {name: 'user', title: 'User'},
     {name: 'type', title: 'Field Type'},
-
+    {name: 'propagated', title: 'Propagated'},
     ],
     tableData: {{ tableData|json_encode|raw }},
     });

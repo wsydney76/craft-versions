@@ -16,6 +16,7 @@ use function Arrayy\create;
 use function get_class;
 use function in_array;
 use function strpos;
+use function version_compare;
 
 class VersionsService extends Component
 {
@@ -210,5 +211,9 @@ class VersionsService extends Component
         });
 
         return $user;
+    }
+
+    public function canCompare() {
+        return version_compare(Craft::$app->version,'3.4','>=');
     }
 }
