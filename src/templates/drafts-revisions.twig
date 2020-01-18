@@ -5,6 +5,7 @@
 
 {% set id = craft.app.request.param('id') %}
 {% set site = craft.app.request.param('site') %}
+{% set draftId = craft.app.request.param('draftId') %}
 {% if not id or not site %}
     {% exit 400 %}
 {% endif %}
@@ -14,12 +15,18 @@
     {% exit 404 %}
 {% endif %}
 
+{% if draftId %}
+    {% set draft = craft.entries.draftId(draftId).anyStatus().one %}
+{% endif %}
+
+{% set crumbs = [
+    {label:"Entries", url:cpUrl('entries')}   ,
+    {label:entry.section.name, url:cpUrl('entries/' ~ entry.section.handle)} ,
+    {label:draftId ? draft.title : entry.title, url: cpUrl(entry.cpEditUrl, {draftId: draftId})}
+
+] %}
 
 {% set title = "#{entry.section.name} #{entry.title}: #{'Drafts and Revisions'|t('versions')}" %}
-
-{% block actionButton %}
-    <a class="btn" href="{{ craft.app.request.referrer }}">{{ "Back"|t('versions') }}</a>
-{% endblock %}
 
 {% block sidebar %}
     {% set entries = entry.entriesForAllSites %}

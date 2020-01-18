@@ -42,8 +42,13 @@
 {% if entry.id and not entry.isUnsavedDraft %}
     <div class="data">
         <div class="value">
-            <a href="{{ cpUrl('versions/drafts-revisions',{id:entry.sourceId, site:entry.site.handle}) }}">{{ "Drafts and Revisions"|t('versions') }}</a>
+            <a href="{{ cpUrl('versions/drafts-revisions',{id:entry.sourceId, site:entry.site.handle, draftId:entry.draftId}) }}">{{ "Drafts and Revisions"|t('versions') }}</a>
         </div>
+        {% if craft.versions.canCompare and entry.isDraft %}
+            <div class="value">
+                <a href="{{ cpUrl('versions/compare',{draftId:entry.draftId, site:entry.site.handle}) }}">{{ "Compare"|t('versions') }}</a>
+            </div>
+        {% endif %}
     </div>
 {% endif %}
 
@@ -102,6 +107,24 @@
     .fail(function() {
     alert("error");
     });
+    });
+
+
+    function versionReload() {
+        document.getElementsByClassName('lp-preview')[0].contentWindow.location.reload();
+        $('#versionsReloadBtn').removeClass('submit');
+    }
+
+    Garnish.on(Craft.Preview, 'beforeUpdateIframe', function(event) {
+    if (!event.refresh) {
+        var btn = document.getElementById('versionsReloadBtn');
+        if (!btn) {
+        $('.lp-preview-container .flex').append(`
+            <div id="versionsReloadBtn" class="btn submit" onclick="versionReload()">Refresh Preview</div>`);
+        } else {
+            $('#versionsReloadBtn').addClass('submit');
+        }
+    }
     });
 {% endjs %}
 
