@@ -77,7 +77,7 @@ class EntryBehavior extends Behavior
         $entry = $this->owner;
 
         $p = Craft::$app->request->getParam('p');
-        if ($p == 'admin/actions/elements/save-element' && in_array($entry->section->handle, $settings['allowSaveHUD'])) {
+        if ($p == Craft::$app->config->general->cpTrigger . '/actions/elements/save-element' && in_array($entry->section->handle, $settings['allowSaveHUD'])) {
             return true;
         }
 
