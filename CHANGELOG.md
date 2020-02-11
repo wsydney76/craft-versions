@@ -1,5 +1,9 @@
 # Release Notes for Versions
 
+## 1.4.1 2020-02-11
+
+* Fixed an error that would occur when saving from hud with a changed cpTrigger config
+
 ## 1.4 2020-01-18
 
 * Added compare based on Craft 3.4 delta support.
